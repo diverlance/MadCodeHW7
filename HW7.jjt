@@ -1,0 +1,390 @@
+/**
+ * JJTree template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+
+ */options{  IGNORE_CASE=true;
+    JJTREE_OUTPUT_DIRECTORY="wci/frontend";
+    NODE_EXTENDS="wci.intermediate.icodeimpl.ICodeNodeImpl";
+    MULTI=true;
+    VISITOR=true;}PARSER_BEGIN(HtScrape)package wci.frontend;
+
+import java.util.ArrayList;
+import java.io.*;
+
+import wci.intermediate.*;
+import wci.intermediate.symtabimpl.*;
+import wci.backend.*;
+import wci.util.*;
+ 
+import static wci.intermediate.symtabimpl.SymTabKeyImpl.*;
+import static wci.intermediate.symtabimpl.DefinitionImpl.*;
+import static wci.intermediate.symtabimpl.RoutineCodeImpl.*;
+import static wci.intermediate.symtabimpl.SymTabKeyImpl.*;
+import static wci.intermediate.icodeimpl.ICodeKeyImpl.*;
+
+public class HtScrape{  public static void main(String args [])  {    Reader sr = new StringReader("input.txt");    HtScrape ht = new HtScrape(sr);    try {
+        java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader("input.txt"));
+      	StringBuilder sb = new StringBuilder();
+		String line = "";
+		while((line = br.readLine()) != null)
+			sb.append(line+"\r\n"); 
+     	
+        java.io.StringReader sr = new java.io.StringReader(sb.toString());
+        HtScrape parser = new HtScrape(sr);
+       
+       SimpleNode n = HtScrape.Program();
+     	n.dump(">");
+      System.out.println("Thank you.");
+        }
+        catch (ParseException ex) {
+            ex.printStackTrace();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }  }}PARSER_END(HtScrape)SKIP :{  " "| "\t"| "\n"| "\r"| < "//" (~[ "\n", "\r" ])*    (      "\n"    | "\r"    | "\r\n"    ) >| < "/*" (~[ "*" ])* "*"    (      ~[ "/" ] (~[ "*" ])* "*"    )*    "/" >}
+TOKEN : /* LITERALS */{  < INTEGER_LITERAL :    < DECIMAL_LITERAL > ([ "l", "L" ])?  | < HEX_LITERAL > ([ "l", "L" ])?  | < OCTAL_LITERAL > ([ "l", "L" ])?     >| < #DECIMAL_LITERAL : [ "1"-"9" ] ([ "0"-"9" ])* >| < #HEX_LITERAL : "0" [ "x", "X" ] ([ "0"-"9", "a"-"f", "A"-"F" ])+ >| < #OCTAL_LITERAL : "0" ([ "0"-"7" ])* >}/*TOKEN :  IDENTIFIERS{  < IDENTIFIER :    < LETTER >    (      < LETTER >    | < DIGIT >    )* >| < #LETTER : [ "_", "a"-"z", "A"-"Z" ] >| < #DIGIT : [ "0"-"9" ] >} */
+TOKEN: /*HtScrape Tokens */
+{
+  	<STRING_LITERAL:"\"" (~["\n","\r","\""])* ("\""|"\n"|"\r"|"\r\n")>
+  	{ debugStream.println("STRING_LITERAL token: " + matchedToken.image); }
+ 	| 
+    <CHARACTER:
+    "'"(["a"-"z", "A"-"Z", "_"]|"\\"|["0"-"9"])"'"
+    >  { debugStream.println("CHARACTER token: " + matchedToken.image); }
+    |
+    <DIGIT:
+    ["0"-"9"]
+    >
+  	| //reserved words
+    <IF: "if" >
+    { debugStream.println("IF token: " + matchedToken.image); }
+    |
+    <ELSE: "else" >
+    { debugStream.println("ELSE token: " + matchedToken.image); }
+    |
+    < THEN: "then" >
+    { debugStream.println("THEN token: " + matchedToken.image); }
+    | 
+    <EXIT: "exit" >
+    { debugStream.println("EXIT token: " + matchedToken.image); }
+    |
+    < THROW: "throw" >
+    { debugStream.println("THROW token: " + matchedToken.image); }
+    | 
+    < BREAK: "break" >
+    { debugStream.println("BREAK token: " + matchedToken.image); }
+    |
+    < VOID: "void" >
+    { debugStream.println("VOID token: " + matchedToken.image); }
+    |
+    < RETURN: "return" >
+    { debugStream.println("RETURN token: " + matchedToken.image); }
+    |
+    < INT: "int" >
+    { debugStream.println("INT token: " + matchedToken.image); }
+    |
+    < NUMBER: "number" >
+    { debugStream.println("NUMBER token: " + matchedToken.image); }
+  	|
+  	< STRING: "string">
+  	{ debugStream.println("STRING token: " + matchedToken.image); }
+ 	| 
+    < TRUE: "true" >
+    { debugStream.println("TRUE token: " + matchedToken.image); }
+    |
+    < FALSE: "false" >
+    { debugStream.println("FALSE token: " + matchedToken.image); }
+    | 
+    < TRY: "try" >
+    { debugStream.println("TRY token: " + matchedToken.image); }
+    |
+    < CATCH: "catch" >
+    { debugStream.println("CATCH token: " + matchedToken.image); }
+    |
+    < FOR: "for" >
+    { debugStream.println("FOR token: " + matchedToken.image); }
+    |
+    < NULL: "null" >
+    { debugStream.println("NULL token: " + matchedToken.image); }
+    |
+    < TABLE: "table" >
+    { debugStream.println("TABLE token: " + matchedToken.image); }
+    |
+    < TABLE_DATA: "table_data" >
+    { debugStream.println("TABLE_DATA token: " + matchedToken.image); }
+    |
+    < COLOR: "color" >
+    { debugStream.println("COLOR token: " + matchedToken.image); }
+  	| 
+    < GET: "get" >
+    { debugStream.println("GET token: " + matchedToken.image); }
+    |
+    < PRINT: "print" >
+    { debugStream.println("PRINT token: " + matchedToken.image); }
+    |
+    < CLOSE: "close" >
+	{ debugStream.println("CLOSE token: " + matchedToken.image); }
+ 	|
+ 	< FILE: "file" >
+    { debugStream.println("FILE token: " + matchedToken.image); }
+    |
+    < LOAD: "load" >
+	{ debugStream.println("LOAD token: " + matchedToken.image); }
+ 	|
+ 	< GET_TABLE: "getTable" >
+	{ debugStream.println("GET_TABLE token: " + matchedToken.image); }
+ 	|
+ 	< GET_DATA: "getData" >
+	{ debugStream.println("GET_DATA token: " + matchedToken.image); }
+ 	|
+ 	< GET_COLOR: "getColor" >
+	{ debugStream.println("GET_COLOR token: " + matchedToken.image); }
+ 	|  
+    <IDENTIFIER: (["a"-"z", "A"-"Z"])(["a"-"z", "A"-"Z", "0"-"9","_", "-"])* >  
+   	{ debugStream.println("IDENTIFIER token: " + matchedToken.image); }
+    |
+	// SPECIAL SYMBOLS
+    < LEFT_PAREN: "(" >
+    { debugStream.println("LEFT_PAREN token: " + matchedToken.image); }
+  	|
+  	< RIGHT_PAREN: ")" >
+  	{ debugStream.println("RIGHT_PAREN token: " + matchedToken.image); }
+ 	|
+ 	< LEFT_CURLY: "{" >
+	{ debugStream.println("LEFT_CURLY token: " + matchedToken.image); }
+	| 
+ 	< RIGHT_CURLY: "}" >
+	{ debugStream.println("RIGHT_CURLY token: " + matchedToken.image); }
+	| 
+	< PLUS: "+" >
+ 	{ debugStream.println("PLUS token: " + matchedToken.image); }
+	|
+	< MINUS: "-" >
+ 	{ debugStream.println("MINUS token: " + matchedToken.image); }
+	|
+ 	< EQUALS: "=" >
+ 	{ debugStream.println("EQUALS token: " + matchedToken.image); }
+	|
+	< LESS_THAN: "<" >
+	{ debugStream.println("LESS_THAN token: " + matchedToken.image); }
+	|
+	< GREATER_THAN: ">" >
+	{ debugStream.println("GREATER_THAN token: " + matchedToken.image); }
+	|
+	< BANG: "!" >
+	{ debugStream.println("BANG token: " + matchedToken.image); }
+	|
+	< COMMA: "," >
+	{ debugStream.println("COMMA token: " + matchedToken.image); }
+	|
+	< PERIOD: "." >
+	{ debugStream.println("PERIOD token: " + matchedToken.image); }
+	|
+	< SEMICOLON: ";" >
+	{ debugStream.println("SEMICOLON token: " + matchedToken.image); }
+	|
+	< AT_SIGN: "@" >
+	{ debugStream.println("AT_SIGN token: " + matchedToken.image); }
+	|
+	< POUND_SIGN: "#" >
+	{ debugStream.println("POUND_SIGN token: " + matchedToken.image); }
+}
+
+	//production rules
+	SimpleNode Program(): {}
+	{
+	  (Statement())+
+	  < EOF >
+	  { System.out.println("\n** Successfully parsed an entire Program!\n");
+	  return jjtThis; }
+	  
+	}
+	
+	void Statement() : {}
+	{
+	  (
+	    IntDeclaration() |
+	    StringDeclaration() |
+	    SimpleAssignment() |
+	    FileDeclaration() |
+	    LoadStatement() |
+	    TableDeclaration() |
+	    GetTableStatement() |
+	    TableDataDeclaration() |
+	    GetTableDataStatement() |
+	    ColorDeclaration() |
+	    GetColorStatement() |
+	    PrintStatement() |
+	    CloseStatement() |
+	    IfStatement()
+	  )
+	}
+
+	void IntDeclaration(): {}
+	{
+	  < INT >
+	  < IDENTIFIER >
+	  < EQUALS >
+	  < DIGIT >
+	  < SEMICOLON >
+	  { System.out.println("Successfully parsed an Int Declaration!\n"); }
+	}
+	
+	void SimpleAssignment() : {}
+	{
+	  < IDENTIFIER >
+	  < EQUALS >
+	  (< DIGIT >|< STRING_LITERAL >)
+	  < SEMICOLON >
+	  { System.out.println("Successfully parsed a Simple Assignment!\n"); }
+	}
+
+	void StringDeclaration() : {}
+	{
+	  < STRING >
+	  < IDENTIFIER >
+	  < EQUALS >
+	  < STRING_LITERAL >
+	  < SEMICOLON >
+	  { System.out.println("Successfully parsed a String Declaration!\n"); }
+	}
+
+	void FileDeclaration() : {}
+	{
+	  < FILE >
+	  < IDENTIFIER >
+	  < EQUALS >
+	  LoadStatement()
+	  { System.out.println("Successfully parsed a File Declaration!\n"); }
+	}
+
+	void LoadStatement() : {}
+	{
+	  < LOAD >
+	  < LEFT_PAREN >
+	  < IDENTIFIER >
+	  < RIGHT_PAREN >
+	  < SEMICOLON >
+	  { System.out.println("Successfully parsed a Load Statement!\n"); }
+	}
+
+	void TableDeclaration(): {}
+	{
+	  < TABLE >
+	  < IDENTIFIER >
+	  < EQUALS >
+	  GetTableStatement()
+	  { System.out.println("Successfully parsed a Table Declaration!\n"); }
+	}
+
+	void GetTableStatement(): {}
+	{
+	  < GET_TABLE >
+	  < LEFT_PAREN >
+	  < IDENTIFIER >
+	  < RIGHT_PAREN >
+	  < SEMICOLON >
+	  { System.out.println("Successfully parsed a GetTable Statement!\n"); }
+	}
+
+	void TableDataDeclaration(): {}
+	{
+	  < TABLE_DATA >
+	  < IDENTIFIER >
+	  < EQUALS >
+	  GetTableDataStatement()
+	  { System.out.println("Successfully parsed a TableData Declaration!\n"); }
+	}
+
+	void GetTableDataStatement(): {}
+	{
+	  < GET_DATA >
+	  < LEFT_PAREN >
+	  MultipleParams()
+	  < RIGHT_PAREN >
+	  < SEMICOLON >
+	  { System.out.println("Successfully parsed a GetTableData Statement!\n"); }
+	}
+
+	void ColorDeclaration(): {}
+	{
+	  < COLOR >
+	  < IDENTIFIER >
+	  < EQUALS >
+	  GetColorStatement()
+	  { System.out.println("Successfully parsed a Color Declaration!\n"); }
+	}
+
+	void GetColorStatement(): {}
+	{
+	  < GET_COLOR >
+	  < LEFT_PAREN >
+	  MultipleParams()
+	  < RIGHT_PAREN >
+	  < SEMICOLON >
+	  { System.out.println("Successfully parsed a GetColor Statement!\n"); }
+	}
+	
+	void MultipleParams() : {}
+	{
+	  (< IDENTIFIER >|(< DIGIT >)+)
+	  (
+	    < COMMA >
+	    (
+	      < IDENTIFIER >|(< DIGIT >)+)
+	  )*
+	  { System.out.println("Successfully parsed multiple parameters!\n"); }
+	}
+
+	void PrintStatement() : {}
+	{
+	  < PRINT >
+	  < LEFT_PAREN >
+	  < IDENTIFIER >
+	  < RIGHT_PAREN >
+	  < SEMICOLON >
+	  { System.out.println("Successfully parsed a Print Statement!\n"); }
+	}
+
+	void CloseStatement() : {}
+	{
+	  < CLOSE >
+	  < LEFT_PAREN >
+	  < IDENTIFIER >
+	  < RIGHT_PAREN >
+	  < SEMICOLON >
+	  { System.out.println("Successfully parsed a Close Statement!\n"); }
+	}
+	
+    void IfStatement() : {} {
+  		<IF><LEFT_PAREN>
+  		Expression()
+  		<RIGHT_PAREN><LEFT_CURLY >
+  		Statement()
+  		<RIGHT_CURLY >
+    	{ System.out.println("Successfully parsed an if statement!\n"); }
+	}
+	
+	void Expression() : {} 
+	{
+  		{System.out.println("\nEXPRESSION STARTS");}
+  		Operator()
+  		{System.out.println("EXPRESSION ENDS\n");}
+	}
+
+	void Operator() : {} 
+	{
+  		<IDENTIFIER> 
+  		expr_operator()  
+  		Operand()
+	}
+	
+	void Operand() : {Token t;} 
+	{
+ 		 t=<DIGIT> {System.out.println("Operand: " + t.image);}
+	}
+
+	void expr_operator() :{Token t;	}
+	{
+	  {System.out.println("Operator:");}
+	  (< PLUS >|< MINUS >|< EQUALS >|< GREATER_THAN >|< LESS_THAN >)
+	}
+
