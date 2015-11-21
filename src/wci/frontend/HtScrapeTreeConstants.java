@@ -24,6 +24,7 @@ public interface HtScrapeTreeConstants
   public int JJTOPERATOR = 18;
   public int JJTOPERAND = 19;
   public int JJTEXPR_OPERATOR = 20;
+  public int JJTVOID = 21;
 
 
   public String[] jjtNodeName = {
@@ -48,6 +49,7 @@ public interface HtScrapeTreeConstants
     "Operator",
     "Operand",
     "expr_operator",
+    "void",
   };
 }
-/* JavaCC - OriginalChecksum=40b7aad5268dc024e2839963fe6a0103 (do not edit this line) */
+/* JavaCC - OriginalChecksum=6dc0f6df61c65e9fec5bdfb111d0908a (do not edit this line) */
