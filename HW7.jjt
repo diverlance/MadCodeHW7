@@ -1,10 +1,17 @@
 /**
  * JJTree template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+
- */options{  IGNORE_CASE=true;
-    JJTREE_OUTPUT_DIRECTORY="wci/frontend";
+ */
+options
+{
+  IGNORE_CASE=true;
+    JJTREE_OUTPUT_DIRECTORY="src/wci/frontend";
     NODE_EXTENDS="wci.intermediate.icodeimpl.ICodeNodeImpl";
     MULTI=true;
-    VISITOR=true;}PARSER_BEGIN(HtScrape)package wci.frontend;
+    VISITOR=true;
+}
+
+PARSER_BEGIN(HtScrape)
+package wci.frontend;
 
 import java.util.ArrayList;
 import java.io.*;
@@ -20,27 +27,101 @@ import static wci.intermediate.symtabimpl.RoutineCodeImpl.*;
 import static wci.intermediate.symtabimpl.SymTabKeyImpl.*;
 import static wci.intermediate.icodeimpl.ICodeKeyImpl.*;
 
-public class HtScrape{  public static void main(String args [])  {    Reader sr = new StringReader("input.txt");    HtScrape ht = new HtScrape(sr);    try {
-        java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader("input.txt"));
-      	StringBuilder sb = new StringBuilder();
-		String line = "";
-		while((line = br.readLine()) != null)
-			sb.append(line+"\r\n"); 
-     	
-        java.io.StringReader sr = new java.io.StringReader(sb.toString());
-        HtScrape parser = new HtScrape(sr);
-       
-      	SimpleNode n = HtScrape.Program();
-     	n.dump(">");
-      	System.out.println("Thank you.");
-    }
-    catch (ParseException ex) {
-            ex.printStackTrace();
-    }
-    catch (Exception e) {
-            e.printStackTrace();
-    }  }}PARSER_END(HtScrape)SKIP :{  " "| "\t"| "\n"| "\r"| < "//" (~[ "\n", "\r" ])*    (      "\n"    | "\r"    | "\r\n"    ) >| < "/*" (~[ "*" ])* "*"    (      ~[ "/" ] (~[ "*" ])* "*"    )*    "/" >}
-TOKEN : /* LITERALS */{  < INTEGER_LITERAL :    < DECIMAL_LITERAL > ([ "l", "L" ])?  | < HEX_LITERAL > ([ "l", "L" ])?  | < OCTAL_LITERAL > ([ "l", "L" ])?     >| < #DECIMAL_LITERAL : [ "1"-"9" ] ([ "0"-"9" ])* >| < #HEX_LITERAL : "0" [ "x", "X" ] ([ "0"-"9", "a"-"f", "A"-"F" ])+ >| < #OCTAL_LITERAL : "0" ([ "0"-"7" ])* >}/*TOKEN :  IDENTIFIERS{  < IDENTIFIER :    < LETTER >    (      < LETTER >    | < DIGIT >    )* >| < #LETTER : [ "_", "a"-"z", "A"-"Z" ] >| < #DIGIT : [ "0"-"9" ] >} */
+public class HtScrape
+{
+    private static final String SOURCE_SUFFIX = ".txt";
+    private static final String OUTPUT_SUFFIX = ".j";
+
+    private static SymTabStack symTabStack;
+    private static SymTabEntry programId;
+
+    private static ArrayList<SymTabEntry> variableList = new ArrayList<SymTabEntry>();
+    private static int variableIndex = 0;
+    
+  public static void main(String args [])
+  	throws Exception
+  {
+    	// Create and initialize the symbol table stack.
+        symTabStack = SymTabFactory.createSymTabStack();
+        Predefined.initialize(symTabStack);
+
+        // Process the source file path which ends in .pcl
+        // and create the output file path which ends in .j
+        String sourceFilePath = "errors.txt";
+        int truncatedLength = sourceFilePath.length() - SOURCE_SUFFIX.length();
+        int suffixIndex = sourceFilePath.lastIndexOf(SOURCE_SUFFIX);
+        String objectFilePath = (suffixIndex == truncatedLength)
+            ? sourceFilePath.substring(0, truncatedLength) + OUTPUT_SUFFIX
+            : sourceFilePath + OUTPUT_SUFFIX;
+
+        // Parse a HtScrape program.
+        Reader    reader = new FileReader(sourceFilePath);
+        HtScrape parser = new HtScrape(reader);
+        SimpleNode rootNode = parser.Program();
+
+    // Print the cross-reference table
+    CrossReferencer crossReferencer = new CrossReferencer();
+    crossReferencer.print(symTabStack);
+
+        // Visit the parse tree nodes to decorate them with type information.
+        TypeSetterVisitor typeVisitor = new TypeSetterVisitor();
+        rootNode.jjtAccept(typeVisitor, null);
+
+        // Create and initialize the ICode wrapper for the parse tree.
+        ICode iCode = ICodeFactory.createICode();
+        iCode.setRoot(rootNode);
+        programId.setAttribute(ROUTINE_ICODE, iCode);
+        
+    // Print the parse tree
+    ParseTreePrinter treePrinter = new ParseTreePrinter(System.out);
+    treePrinter.print(symTabStack);
+  }
+}
+
+PARSER_END(HtScrape)
+
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+| < "//" (~[ "\n", "\r" ])*
+    (
+      "\n"
+    | "\r"
+    | "\r\n"
+    ) >
+| < "/*" (~[ "*" ])* "*"
+    (
+      ~[ "/" ] (~[ "*" ])* "*"
+    )*
+    "/" >
+}
+/*TOKEN : //LITERALS 
+{
+  < INTEGER_LITERAL :
+    < DECIMAL_LITERAL > ([ "l", "L" ])?
+  | < HEX_LITERAL > ([ "l", "L" ])?
+  | < OCTAL_LITERAL > ([ "l", "L" ])? 
+    >
+| < #DECIMAL_LITERAL : [ "1"-"9" ] ([ "0"-"9" ])* >
+| < #HEX_LITERAL : "0" [ "x", "X" ] ([ "0"-"9", "a"-"f", "A"-"F" ])+ >
+| < #OCTAL_LITERAL : "0" ([ "0"-"7" ])* >
+}*/
+
+/*TOKEN :  IDENTIFIERS
+{
+  < IDENTIFIER :
+    < LETTER >
+    (
+      < LETTER >
+    | < DIGIT >
+    )* >
+| < #LETTER : [ "_", "a"-"z", "A"-"Z" ] >
+| < #DIGIT : [ "0"-"9" ] >
+} */
+
 TOKEN: /*HtScrape Tokens */
 {
   	<STRING_LITERAL:"\"" (~["\n","\r","\""])* ("\""|"\n"|"\r"|"\r\n")>
@@ -188,30 +269,30 @@ TOKEN: /*HtScrape Tokens */
 	{ debugStream.println("POUND_SIGN token: " + matchedToken.image); }
 }
 
-TOKEN: /*ERROR TOKEN*/{
-	< ERROR : ~["\r","\n"] >
-	{ debugStream.println("ERROR_SIGN token: " + matchedToken.image); }
-}
-
-	
 	//production rules
 	SimpleNode Program(): {SimpleNode rootNode;}
 	{
-	 try {
-	  (Statement())+
-	  < EOF >
 	  {
-	    System.out.println("\n** Successfully parsed an entire Program!\n");
-	  	return jjtThis;
-	  	}
-	 }
-	   catch (ParseException ex) {
-        	handleError(ex);
-        	return null;
-	  }
-	}
+	    programId = symTabStack.enterLocal("Prorgam");
+        programId.setDefinition(DefinitionImpl.PROGRAM);
+        programId.setAttribute(ROUTINE_SYMTAB, symTabStack.push());
+        symTabStack.setProgramId(programId);	  }
+	   try {
+        rootNode = Statement()
+        <EOF> {
+          System.out.println("\n** Successfully parsed an entire Program!\n");
+           return rootNode;
+        }
+    }
+    catch (ParseException ex) {
+        handleError(ex);
+        return null;
+    }
+	  	
+} 
+ 
 	
-	void Statement() : {}
+	SimpleNode Statement() : {}
 	{
 	  (
 	    IntDeclaration() |
@@ -227,25 +308,59 @@ TOKEN: /*ERROR TOKEN*/{
 	    GetColorStatement() |
 	    PrintStatement() |
 	    CloseStatement() |
-	    IfStatement()
-	  )
+	    IfStatement()	    
+	  )*
+	  {	    return jjtThis;	  }	  
+	}
+
+	void variable() : {}
+{
+    <IDENTIFIER> {
+        SymTabEntry variableId = symTabStack.lookup(token.image);
+        variableId.appendLineNumber(token.beginLine);
+        TypeSpec type = variableId.getTypeSpec();
+        jjtThis.setTypeSpec(type);
+        jjtThis.setAttribute(ID, variableId);
+    }
+}
+
+	void newVariable(TypeSpec type) : {}
+	{		<IDENTIFIER>
+		 {		   processVariableDecl(token, variableIndex++, variableList);
+		   for (SymTabEntry variableId : variableList) {
+              variableId.setTypeSpec(type);
+            }
+         jjtThis.setTypeSpec(Predefined.integerType);
+         jjtThis.setAttribute(ID, token);
+		 }
 	}
 
 	void IntDeclaration(): {}
 	{
 	  < INT >
-	  < IDENTIFIER >
+	  {
+          SymTabEntry typeId = symTabStack.lookup(token.image);
+          typeId.appendLineNumber(token.beginLine);
+          TypeSpec type = typeId.getTypeSpec(); 	  }
+	  newVariable(type)
 	  < EQUALS >
-	  < DIGIT >
+      integerConstant()
 	  < SEMICOLON >
-	  { System.out.println("Successfully parsed an Int Declaration!\n"); }
+	  {
+	    System.out.println("Successfully parsed an Int Declaration!\n");
+	  }
 	}
+
+
 	
 	void SimpleAssignment() : {}
 	{
-	  < IDENTIFIER >
+	  variable()
 	  < EQUALS >
-	  (< DIGIT >|< STRING_LITERAL >)
+	  (integerConstant()
+      |
+      stringConstant()
+      )
 	  < SEMICOLON >
 	  { System.out.println("Successfully parsed a Simple Assignment!\n"); }
 	}
@@ -253,9 +368,14 @@ TOKEN: /*ERROR TOKEN*/{
 	void StringDeclaration() : {}
 	{
 	  < STRING >
-	  < IDENTIFIER >
+	  {
+        SymTabEntry typeId = symTabStack.lookup(token.image);
+        typeId.appendLineNumber(token.beginLine);
+        TypeSpec type = typeId.getTypeSpec(); 
+	  }
+	  newVariable(type)
 	  < EQUALS >
-	  < STRING_LITERAL >
+	  stringConstant()
 	  < SEMICOLON >
 	  { System.out.println("Successfully parsed a String Declaration!\n"); }
 	}
@@ -277,6 +397,7 @@ TOKEN: /*ERROR TOKEN*/{
 	  < RIGHT_PAREN >
 	  < SEMICOLON >
 	  { System.out.println("Successfully parsed a Load Statement!\n"); }
+	
 	}
 
 	void TableDeclaration(): {}
@@ -401,19 +522,43 @@ TOKEN: /*ERROR TOKEN*/{
 	  (< PLUS >|< MINUS >|< EQUALS >|< GREATER_THAN >|< LESS_THAN >)
 	}
 
-	void Error() #void : {}
+	void integerConstant() : {}
 	{
-    	<ERROR>
+    <DIGIT> {
+        jjtThis.setTypeSpec(Predefined.integerType);
+        jjtThis.setAttribute(VALUE, Integer.parseInt(token.image));
+    	}
 	}
 
-	JAVACODE
-	String handleError(ParseException ex) #void
+	void stringConstant() : {}
 	{
-	    Token token = ex.currentToken;
-	    System.out.println(ex.getMessage());
-	
-	    token = getNextToken();
-	
-		jjtree.popNode();
-	    return token.image;
+    <STRING_LITERAL> {
+        jjtThis.setTypeSpec(Predefined.stringType);
+        jjtThis.setAttribute(VALUE, String.valueOf(token.image));
+    	}
 	}
+//Handles errors when parsing
+JAVACODE
+void processVariableDecl(Token token, int index,
+                         ArrayList<SymTabEntry> variableList) #void
+{
+    SymTabEntry variableId = symTabStack.enterLocal(token.image);
+    variableId.setIndex(index);
+    variableId.setDefinition(DefinitionImpl.VARIABLE);
+    variableId.appendLineNumber(token.beginLine);
+    variableList.add(variableId);
+}
+
+JAVACODE
+String handleError(ParseException ex) #void
+{
+    Token token = ex.currentToken;
+    System.out.println(ex.getMessage());
+	do	{
+   	 	token = getNextToken();
+   }while (token.toString() != " ");
+   
+	jjtree.popNode();
+	
+    return token.image;
+}
