@@ -29,7 +29,7 @@ import static wci.intermediate.icodeimpl.ICodeKeyImpl.*;
 
 public class HtScrape
 {
-    private static final String SOURCE_SUFFIX = ".hts";
+    private static final String SOURCE_SUFFIX = ".txt";
     private static final String OUTPUT_SUFFIX = ".j";
 
     private static SymTabStack symTabStack;
@@ -317,6 +317,28 @@ TOKEN: /*HtScrape Tokens */
 	  {	    return jjtThis;	  }	  
 	}
 
+	void variable() : {}
+{
+    <IDENTIFIER> {
+        SymTabEntry variableId = symTabStack.lookup(token.image);
+        variableId.appendLineNumber(token.beginLine);
+        TypeSpec type = variableId.getTypeSpec();
+        jjtThis.setTypeSpec(type);
+        jjtThis.setAttribute(ID, variableId);
+    }
+}
+
+	void newVariable(TypeSpec type) : {}
+	{		<IDENTIFIER>
+		 {		   processVariableDecl(token, variableIndex++, variableList);
+		   for (SymTabEntry variableId : variableList) {
+              variableId.setTypeSpec(type);
+            }
+         jjtThis.setTypeSpec(Predefined.integerType);
+         jjtThis.setAttribute(ID, token);
+		 }
+	}
+
 	void IntDeclaration(): {}
 	{
 	  < INT >
@@ -324,28 +346,25 @@ TOKEN: /*HtScrape Tokens */
           SymTabEntry typeId = symTabStack.lookup(token.image);
           typeId.appendLineNumber(token.beginLine);
           TypeSpec type = typeId.getTypeSpec(); 	  }
-	  < IDENTIFIER >	  {
-        processVariableDecl(token, variableIndex++, variableList);
-        for (SymTabEntry variableId : variableList) {
-              variableId.setTypeSpec(type);            }   
-      }
+	  newVariable(type)
 	  < EQUALS >
-	  < DIGIT >
-	  {
-	    jjtThis.setTypeSpec(Predefined.integerType);
-        jjtThis.setAttribute(VALUE, Integer.parseInt(token.image));
-      }
+      integerConstant()
 	  < SEMICOLON >
 	  {
 	    System.out.println("Successfully parsed an Int Declaration!\n");
 	  }
 	}
+
+
 	
 	void SimpleAssignment() : {}
 	{
-	  < IDENTIFIER >
+	  variable()
 	  < EQUALS >
-	  (< DIGIT >|< STRING_LITERAL >)
+	  (integerConstant()
+      |
+      stringConstant()
+      )
 	  < SEMICOLON >
 	  { System.out.println("Successfully parsed a Simple Assignment!\n"); }
 	}
@@ -358,19 +377,9 @@ TOKEN: /*HtScrape Tokens */
         typeId.appendLineNumber(token.beginLine);
         TypeSpec type = typeId.getTypeSpec(); 
 	  }
-	  < IDENTIFIER >
-	  {
-        processVariableDecl(token, variableIndex++, variableList);
-        for (SymTabEntry variableId : variableList) {
-              variableId.setTypeSpec(type);
-            }   
-      }
+	  newVariable(type)
 	  < EQUALS >
-	  < STRING_LITERAL >
-	  {
-	    jjtThis.setTypeSpec(Predefined.stringType);
-        jjtThis.setAttribute(VALUE, String.valueOf(token.image));
-      }
+	  stringConstant()
 	  < SEMICOLON >
 	  { System.out.println("Successfully parsed a String Declaration!\n"); }
 	}
@@ -516,6 +525,21 @@ TOKEN: /*HtScrape Tokens */
 	  (< PLUS >|< MINUS >|< EQUALS >|< GREATER_THAN >|< LESS_THAN >)
 	}
 
+	void integerConstant() : {}
+	{
+    <DIGIT> {
+        jjtThis.setTypeSpec(Predefined.integerType);
+        jjtThis.setAttribute(VALUE, Integer.parseInt(token.image));
+    	}
+	}
+
+	void stringConstant() : {}
+	{
+    <STRING_LITERAL> {
+        jjtThis.setTypeSpec(Predefined.stringType);
+        jjtThis.setAttribute(VALUE, String.valueOf(token.image));
+    	}
+	}
 //Handles errors when parsing
 /*JAVACODE 
 public String errorHandler(ParseException exception) 

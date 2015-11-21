@@ -36,4 +36,11 @@ public class TypeSetterVisitor extends HtScrapeVisitorAdapter
         setType(node);
         return obj;
     }
+    
+    public Object visit(ASTSimpleAssignment node, Object data)
+    {
+        Object obj = super.visit(node, data);
+        setType(node);
+        return obj;
+    }
 }

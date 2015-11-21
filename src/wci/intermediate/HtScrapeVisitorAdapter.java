@@ -45,14 +45,12 @@ public class HtScrapeVisitorAdapter implements HtScrapeVisitor{
 
 	@Override
 	public Object visit(ASTTableDeclaration node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
 	public Object visit(ASTGetTableStatement node, Object data) {
-		// TODO Auto-generated method stub
-		return null;
+		return node.childrenAccept(this, data);
 	}
 
 	@Override
@@ -112,6 +110,26 @@ public class HtScrapeVisitorAdapter implements HtScrapeVisitor{
 
 	@Override
 	public Object visit(ASTexpr_operator node, Object data) {
+		return node.childrenAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTvariable node, Object data) {
+		return node.childrenAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTnewVariable node, Object data) {
+		return node.childrenAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTintegerConstant node, Object data) {
+		return node.childrenAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTstringConstant node, Object data) {
 		return node.childrenAccept(this, data);
 	}
     

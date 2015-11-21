@@ -33,7 +33,7 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants/*@egen*/
   protected static JJTHtScrapeState jjtree = new JJTHtScrapeState();
 
 /*@egen*/
-    private static final String SOURCE_SUFFIX = ".hts";
+    private static final String SOURCE_SUFFIX = ".txt";
     private static final String OUTPUT_SUFFIX = ".j";
 
     private static SymTabStack symTabStack;
@@ -378,6 +378,62 @@ TOKEN: /*HtScrape Tokens */
 /*@egen*/	  
 	}
 
+	void variable() : {/*@bgen(jjtree) variable */
+  ASTvariable jjtn000 = new ASTvariable(JJTVARIABLE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) variable */
+    try {
+/*@egen*/
+    <IDENTIFIER>/*@bgen(jjtree)*/
+                 {
+                   jjtree.closeNodeScope(jjtn000, true);
+                   jjtc000 = false;
+                 }
+/*@egen*/ {
+        SymTabEntry variableId = symTabStack.lookup(token.image);
+        variableId.appendLineNumber(token.beginLine);
+        TypeSpec type = variableId.getTypeSpec();
+        jjtn000.setTypeSpec(type);
+        jjtn000.setAttribute(ID, variableId);
+    }/*@bgen(jjtree)*/
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
+}
+
+	void newVariable(TypeSpec type) : {/*@bgen(jjtree) newVariable */
+  ASTnewVariable jjtn000 = new ASTnewVariable(JJTNEWVARIABLE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+	{/*@bgen(jjtree) newVariable */
+                try {
+/*@egen*/		<IDENTIFIER>/*@bgen(jjtree)*/
+                 {
+                   jjtree.closeNodeScope(jjtn000, true);
+                   jjtc000 = false;
+                 }
+/*@egen*/
+		 {		   processVariableDecl(token, variableIndex++, variableList);
+		   for (SymTabEntry variableId : variableList) {
+              variableId.setTypeSpec(type);
+            }
+         jjtn000.setTypeSpec(Predefined.integerType);
+         jjtn000.setAttribute(ID, token);
+		 }/*@bgen(jjtree)*/
+                } finally {
+                  if (jjtc000) {
+                    jjtree.closeNodeScope(jjtn000, true);
+                  }
+                }
+/*@egen*/
+	}
+
 	void IntDeclaration(): {/*@bgen(jjtree) IntDeclaration */
   ASTIntDeclaration jjtn000 = new ASTIntDeclaration(JJTINTDECLARATION);
   boolean jjtc000 = true;
@@ -391,17 +447,9 @@ TOKEN: /*HtScrape Tokens */
           SymTabEntry typeId = symTabStack.lookup(token.image);
           typeId.appendLineNumber(token.beginLine);
           TypeSpec type = typeId.getTypeSpec(); 	  }
-	  < IDENTIFIER >	  {
-        processVariableDecl(token, variableIndex++, variableList);
-        for (SymTabEntry variableId : variableList) {
-              variableId.setTypeSpec(type);            }   
-      }
+	  newVariable(type)
 	  < EQUALS >
-	  < DIGIT >
-	  {
-	    jjtn000.setTypeSpec(Predefined.integerType);
-        jjtn000.setAttribute(VALUE, Integer.parseInt(token.image));
-      }
+      integerConstant()
 	  < SEMICOLON >/*@bgen(jjtree)*/
           {
             jjtree.closeNodeScope(jjtn000, true);
@@ -411,6 +459,20 @@ TOKEN: /*HtScrape Tokens */
 	  {
 	    System.out.println("Successfully parsed an Int Declaration!\n");
 	  }/*@bgen(jjtree)*/
+          } catch (Throwable jjte000) {
+            if (jjtc000) {
+              jjtree.clearNodeScope(jjtn000);
+              jjtc000 = false;
+            } else {
+              jjtree.popNode();
+            }
+            if (jjte000 instanceof RuntimeException) {
+              throw (RuntimeException)jjte000;
+            }
+            if (jjte000 instanceof ParseException) {
+              throw (ParseException)jjte000;
+            }
+            throw (Error)jjte000;
           } finally {
             if (jjtc000) {
               jjtree.closeNodeScope(jjtn000, true);
@@ -418,6 +480,8 @@ TOKEN: /*HtScrape Tokens */
           }
 /*@egen*/
 	}
+
+
 	
 	void SimpleAssignment() : {/*@bgen(jjtree) SimpleAssignment */
   ASTSimpleAssignment jjtn000 = new ASTSimpleAssignment(JJTSIMPLEASSIGNMENT);
@@ -427,9 +491,12 @@ TOKEN: /*HtScrape Tokens */
 	{/*@bgen(jjtree) SimpleAssignment */
           try {
 /*@egen*/
-	  < IDENTIFIER >
+	  variable()
 	  < EQUALS >
-	  (< DIGIT >|< STRING_LITERAL >)
+	  (integerConstant()
+      |
+      stringConstant()
+      )
 	  < SEMICOLON >/*@bgen(jjtree)*/
           {
             jjtree.closeNodeScope(jjtn000, true);
@@ -437,6 +504,20 @@ TOKEN: /*HtScrape Tokens */
           }
 /*@egen*/
 	  { System.out.println("Successfully parsed a Simple Assignment!\n"); }/*@bgen(jjtree)*/
+          } catch (Throwable jjte000) {
+            if (jjtc000) {
+              jjtree.clearNodeScope(jjtn000);
+              jjtc000 = false;
+            } else {
+              jjtree.popNode();
+            }
+            if (jjte000 instanceof RuntimeException) {
+              throw (RuntimeException)jjte000;
+            }
+            if (jjte000 instanceof ParseException) {
+              throw (ParseException)jjte000;
+            }
+            throw (Error)jjte000;
           } finally {
             if (jjtc000) {
               jjtree.closeNodeScope(jjtn000, true);
@@ -459,19 +540,9 @@ TOKEN: /*HtScrape Tokens */
         typeId.appendLineNumber(token.beginLine);
         TypeSpec type = typeId.getTypeSpec(); 
 	  }
-	  < IDENTIFIER >
-	  {
-        processVariableDecl(token, variableIndex++, variableList);
-        for (SymTabEntry variableId : variableList) {
-              variableId.setTypeSpec(type);
-            }   
-      }
+	  newVariable(type)
 	  < EQUALS >
-	  < STRING_LITERAL >
-	  {
-	    jjtn000.setTypeSpec(Predefined.stringType);
-        jjtn000.setAttribute(VALUE, String.valueOf(token.image));
-      }
+	  stringConstant()
 	  < SEMICOLON >/*@bgen(jjtree)*/
           {
             jjtree.closeNodeScope(jjtn000, true);
@@ -479,6 +550,20 @@ TOKEN: /*HtScrape Tokens */
           }
 /*@egen*/
 	  { System.out.println("Successfully parsed a String Declaration!\n"); }/*@bgen(jjtree)*/
+          } catch (Throwable jjte000) {
+            if (jjtc000) {
+              jjtree.clearNodeScope(jjtn000);
+              jjtc000 = false;
+            } else {
+              jjtree.popNode();
+            }
+            if (jjte000 instanceof RuntimeException) {
+              throw (RuntimeException)jjte000;
+            }
+            if (jjte000 instanceof ParseException) {
+              throw (ParseException)jjte000;
+            }
+            throw (Error)jjte000;
           } finally {
             if (jjtc000) {
               jjtree.closeNodeScope(jjtn000, true);
@@ -1016,6 +1101,55 @@ TOKEN: /*HtScrape Tokens */
 /*@egen*/
 	}
 
+	void integerConstant() : {/*@bgen(jjtree) integerConstant */
+  ASTintegerConstant jjtn000 = new ASTintegerConstant(JJTINTEGERCONSTANT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+	{/*@bgen(jjtree) integerConstant */
+    try {
+/*@egen*/
+    <DIGIT>/*@bgen(jjtree)*/
+            {
+              jjtree.closeNodeScope(jjtn000, true);
+              jjtc000 = false;
+            }
+/*@egen*/ {
+        jjtn000.setTypeSpec(Predefined.integerType);
+        jjtn000.setAttribute(VALUE, Integer.parseInt(token.image));
+    	}/*@bgen(jjtree)*/
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
+	}
+
+	void stringConstant() : {/*@bgen(jjtree) stringConstant */
+  ASTstringConstant jjtn000 = new ASTstringConstant(JJTSTRINGCONSTANT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+	{/*@bgen(jjtree) stringConstant */
+    try {
+/*@egen*/
+    <STRING_LITERAL>/*@bgen(jjtree)*/
+                     {
+                       jjtree.closeNodeScope(jjtn000, true);
+                       jjtc000 = false;
+                     }
+/*@egen*/ {
+        jjtn000.setTypeSpec(Predefined.stringType);
+        jjtn000.setAttribute(VALUE, String.valueOf(token.image));
+    	}/*@bgen(jjtree)*/
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
+	}
 //Handles errors when parsing
 /*JAVACODE 
 public String errorHandler(ParseException exception) 

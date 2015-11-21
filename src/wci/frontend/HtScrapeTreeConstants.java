@@ -5,31 +5,37 @@ public interface HtScrapeTreeConstants
 {
   public int JJTPROGRAM = 0;
   public int JJTSTATEMENT = 1;
-  public int JJTINTDECLARATION = 2;
-  public int JJTSIMPLEASSIGNMENT = 3;
-  public int JJTSTRINGDECLARATION = 4;
-  public int JJTFILEDECLARATION = 5;
-  public int JJTLOADSTATEMENT = 6;
-  public int JJTTABLEDECLARATION = 7;
-  public int JJTGETTABLESTATEMENT = 8;
-  public int JJTTABLEDATADECLARATION = 9;
-  public int JJTGETTABLEDATASTATEMENT = 10;
-  public int JJTCOLORDECLARATION = 11;
-  public int JJTGETCOLORSTATEMENT = 12;
-  public int JJTMULTIPLEPARAMS = 13;
-  public int JJTPRINTSTATEMENT = 14;
-  public int JJTCLOSESTATEMENT = 15;
-  public int JJTIFSTATEMENT = 16;
-  public int JJTEXPRESSION = 17;
-  public int JJTOPERATOR = 18;
-  public int JJTOPERAND = 19;
-  public int JJTEXPR_OPERATOR = 20;
-  public int JJTVOID = 21;
+  public int JJTVARIABLE = 2;
+  public int JJTNEWVARIABLE = 3;
+  public int JJTINTDECLARATION = 4;
+  public int JJTSIMPLEASSIGNMENT = 5;
+  public int JJTSTRINGDECLARATION = 6;
+  public int JJTFILEDECLARATION = 7;
+  public int JJTLOADSTATEMENT = 8;
+  public int JJTTABLEDECLARATION = 9;
+  public int JJTGETTABLESTATEMENT = 10;
+  public int JJTTABLEDATADECLARATION = 11;
+  public int JJTGETTABLEDATASTATEMENT = 12;
+  public int JJTCOLORDECLARATION = 13;
+  public int JJTGETCOLORSTATEMENT = 14;
+  public int JJTMULTIPLEPARAMS = 15;
+  public int JJTPRINTSTATEMENT = 16;
+  public int JJTCLOSESTATEMENT = 17;
+  public int JJTIFSTATEMENT = 18;
+  public int JJTEXPRESSION = 19;
+  public int JJTOPERATOR = 20;
+  public int JJTOPERAND = 21;
+  public int JJTEXPR_OPERATOR = 22;
+  public int JJTINTEGERCONSTANT = 23;
+  public int JJTSTRINGCONSTANT = 24;
+  public int JJTVOID = 25;
 
 
   public String[] jjtNodeName = {
     "Program",
     "Statement",
+    "variable",
+    "newVariable",
     "IntDeclaration",
     "SimpleAssignment",
     "StringDeclaration",
@@ -49,7 +55,9 @@ public interface HtScrapeTreeConstants
     "Operator",
     "Operand",
     "expr_operator",
+    "integerConstant",
+    "stringConstant",
     "void",
   };
 }
-/* JavaCC - OriginalChecksum=6dc0f6df61c65e9fec5bdfb111d0908a (do not edit this line) */
+/* JavaCC - OriginalChecksum=789af7f0894c4eb95554a0d8a8532661 (do not edit this line) */

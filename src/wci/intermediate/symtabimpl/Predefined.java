@@ -106,7 +106,7 @@ public class Predefined
         charId.setDefinition(DefinitionImpl.TYPE);
         charId.setTypeSpec(charType);
         
-     // String char.
+     // type String.
         stringId = symTabStack.enterLocal("string");
         stringType = TypeFactory.createType(SCALAR);
         stringType.setIdentifier(stringId);
