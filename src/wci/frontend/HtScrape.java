@@ -278,9 +278,18 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
   jjtree.openNodeScope(jjtn000);
     try {
       jj_consume_token(STRING);
+        SymTabEntry typeId = symTabStack.lookup(token.image);
+        typeId.appendLineNumber(token.beginLine);
+        TypeSpec type = typeId.getTypeSpec();
       jj_consume_token(IDENTIFIER);
+        processVariableDecl(token, variableIndex++, variableList);
+        for (SymTabEntry variableId : variableList) {
+              variableId.setTypeSpec(type);
+            }
       jj_consume_token(EQUALS);
       jj_consume_token(STRING_LITERAL);
+            jjtn000.setTypeSpec(Predefined.stringType);
+        jjtn000.setAttribute(VALUE, String.valueOf(token.image));
       jj_consume_token(SEMICOLON);
             jjtree.closeNodeScope(jjtn000, true);
             jjtc000 = false;

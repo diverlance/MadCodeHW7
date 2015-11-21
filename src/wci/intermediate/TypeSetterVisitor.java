@@ -30,5 +30,10 @@ public class TypeSetterVisitor extends HtScrapeVisitorAdapter
         return obj;
     }
 
-   
+    public Object visit(ASTStringDeclaration node, Object data)
+    {
+        Object obj = super.visit(node, data);
+        setType(node);
+        return obj;
+    }
 }

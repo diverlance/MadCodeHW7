@@ -321,15 +321,13 @@ TOKEN: /*HtScrape Tokens */
 	{
 	  < INT >
 	  {
-	     
           SymTabEntry typeId = symTabStack.lookup(token.image);
           typeId.appendLineNumber(token.beginLine);
-          TypeSpec type = typeId.getTypeSpec();
-          	  }
+          TypeSpec type = typeId.getTypeSpec(); 	  }
 	  < IDENTIFIER >	  {
         processVariableDecl(token, variableIndex++, variableList);
         for (SymTabEntry variableId : variableList) {
-              variableId.setTypeSpec(type);            }            
+              variableId.setTypeSpec(type);            }   
       }
 	  < EQUALS >
 	  < DIGIT >
@@ -339,7 +337,6 @@ TOKEN: /*HtScrape Tokens */
       }
 	  < SEMICOLON >
 	  {
-	    
 	    System.out.println("Successfully parsed an Int Declaration!\n");
 	  }
 	}
@@ -356,9 +353,24 @@ TOKEN: /*HtScrape Tokens */
 	void StringDeclaration() : {}
 	{
 	  < STRING >
+	  {
+        SymTabEntry typeId = symTabStack.lookup(token.image);
+        typeId.appendLineNumber(token.beginLine);
+        TypeSpec type = typeId.getTypeSpec(); 
+	  }
 	  < IDENTIFIER >
+	  {
+        processVariableDecl(token, variableIndex++, variableList);
+        for (SymTabEntry variableId : variableList) {
+              variableId.setTypeSpec(type);
+            }   
+      }
 	  < EQUALS >
 	  < STRING_LITERAL >
+	  {
+	    jjtThis.setTypeSpec(Predefined.stringType);
+        jjtThis.setAttribute(VALUE, String.valueOf(token.image));
+      }
 	  < SEMICOLON >
 	  { System.out.println("Successfully parsed a String Declaration!\n"); }
 	}
