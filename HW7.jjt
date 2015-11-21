@@ -331,11 +331,9 @@ TOKEN: /*HtScrape Tokens */
 	void newVariable(TypeSpec type) : {}
 	{		<IDENTIFIER>
 		 {		   processVariableDecl(token, variableIndex++, variableList);
-		   for (SymTabEntry variableId : variableList) {
-              variableId.setTypeSpec(type);
-            }
-         jjtThis.setTypeSpec(Predefined.integerType);
-         jjtThis.setAttribute(ID, token);
+		   variableList.get(variableIndex-1).setTypeSpec(type);
+		   jjtThis.setTypeSpec(type);
+		   jjtThis.setAttribute(ID, token);
 		 }
 	}
 
@@ -387,7 +385,12 @@ TOKEN: /*HtScrape Tokens */
 	void FileDeclaration() : {}
 	{
 	  < FILE >
-	  < IDENTIFIER >
+	  {
+        SymTabEntry typeId = symTabStack.lookup(token.image);
+        typeId.appendLineNumber(token.beginLine);
+        TypeSpec type = typeId.getTypeSpec(); 
+	  }	  
+	   newVariable(type)
 	  < EQUALS >
 	  LoadStatement()
 	  { System.out.println("Successfully parsed a File Declaration!\n"); }
@@ -397,7 +400,7 @@ TOKEN: /*HtScrape Tokens */
 	{
 	  < LOAD >
 	  < LEFT_PAREN >
-	  < IDENTIFIER >
+	  variable()
 	  < RIGHT_PAREN >
 	  < SEMICOLON >
 	  { System.out.println("Successfully parsed a Load Statement!\n"); }
@@ -406,7 +409,12 @@ TOKEN: /*HtScrape Tokens */
 	void TableDeclaration(): {}
 	{
 	  < TABLE >
-	  < IDENTIFIER >
+	  {
+        SymTabEntry typeId = symTabStack.lookup(token.image);
+        typeId.appendLineNumber(token.beginLine);
+        TypeSpec type = typeId.getTypeSpec(); 
+	  }	  
+	   newVariable(type)
 	  < EQUALS >
 	  GetTableStatement()
 	  { System.out.println("Successfully parsed a Table Declaration!\n"); }
@@ -416,7 +424,7 @@ TOKEN: /*HtScrape Tokens */
 	{
 	  < GET_TABLE >
 	  < LEFT_PAREN >
-	  < IDENTIFIER >
+	  variable()
 	  < RIGHT_PAREN >
 	  < SEMICOLON >
 	  { System.out.println("Successfully parsed a GetTable Statement!\n"); }
@@ -425,7 +433,12 @@ TOKEN: /*HtScrape Tokens */
 	void TableDataDeclaration(): {}
 	{
 	  < TABLE_DATA >
-	  < IDENTIFIER >
+	  {
+        SymTabEntry typeId = symTabStack.lookup(token.image);
+        typeId.appendLineNumber(token.beginLine);
+        TypeSpec type = typeId.getTypeSpec(); 
+	  }	  
+	   newVariable(type)
 	  < EQUALS >
 	  GetTableDataStatement()
 	  { System.out.println("Successfully parsed a TableData Declaration!\n"); }
@@ -444,7 +457,12 @@ TOKEN: /*HtScrape Tokens */
 	void ColorDeclaration(): {}
 	{
 	  < COLOR >
-	  < IDENTIFIER >
+	  {
+        SymTabEntry typeId = symTabStack.lookup(token.image);
+        typeId.appendLineNumber(token.beginLine);
+        TypeSpec type = typeId.getTypeSpec(); 
+	  }	  
+	   newVariable(type)
 	  < EQUALS >
 	  GetColorStatement()
 	  { System.out.println("Successfully parsed a Color Declaration!\n"); }
@@ -475,7 +493,7 @@ TOKEN: /*HtScrape Tokens */
 	{
 	  < PRINT >
 	  < LEFT_PAREN >
-	  < IDENTIFIER >
+	  variable()
 	  < RIGHT_PAREN >
 	  < SEMICOLON >
 	  { System.out.println("Successfully parsed a Print Statement!\n"); }
@@ -485,7 +503,7 @@ TOKEN: /*HtScrape Tokens */
 	{
 	  < CLOSE >
 	  < LEFT_PAREN >
-	  < IDENTIFIER >
+	  variable()
 	  < RIGHT_PAREN >
 	  < SEMICOLON >
 	  { System.out.println("Successfully parsed a Close Statement!\n"); }

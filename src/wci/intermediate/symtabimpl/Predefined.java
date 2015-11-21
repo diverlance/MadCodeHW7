@@ -28,6 +28,10 @@ public class Predefined
     public static TypeSpec booleanType;
     public static TypeSpec charType;
     public static TypeSpec stringType;
+    public static TypeSpec fileType;
+    public static TypeSpec tableType;
+    public static TypeSpec tableDataType;
+    public static TypeSpec colorType;
     public static TypeSpec undefinedType;
     
 
@@ -37,6 +41,10 @@ public class Predefined
     public static SymTabEntry booleanId;
     public static SymTabEntry charId;
     public static SymTabEntry stringId;
+    public static SymTabEntry fileId;
+    public static SymTabEntry tableId;
+    public static SymTabEntry tableDataId;
+    public static SymTabEntry colorId;
     public static SymTabEntry falseId;
     public static SymTabEntry trueId;
     public static SymTabEntry readId;
@@ -108,11 +116,39 @@ public class Predefined
         
      // type String.
         stringId = symTabStack.enterLocal("string");
-        stringType = TypeFactory.createType(SCALAR);
+        stringType = TypeFactory.createType(ARRAY);
         stringType.setIdentifier(stringId);
         stringId.setDefinition(DefinitionImpl.TYPE);
         stringId.setTypeSpec(stringType);
 
+     // type File.
+        fileId = symTabStack.enterLocal("file");
+        fileType = TypeFactory.createType(SCALAR);
+        fileType.setIdentifier(fileId);
+        fileId.setDefinition(DefinitionImpl.TYPE);
+        fileId.setTypeSpec(fileType);
+        
+        // type Table.
+        tableId = symTabStack.enterLocal("table");
+        tableType = TypeFactory.createType(SCALAR);
+        tableType.setIdentifier(tableId);
+        tableId.setDefinition(DefinitionImpl.TYPE);
+        tableId.setTypeSpec(tableType);
+        
+        // type File.
+        tableDataId = symTabStack.enterLocal("table_data");
+        tableDataType = TypeFactory.createType(SCALAR);
+        tableDataType.setIdentifier(tableDataId);
+        tableDataId.setDefinition(DefinitionImpl.TYPE);
+        tableDataId.setTypeSpec(tableDataType);
+        
+        // type File.
+        colorId = symTabStack.enterLocal("color");
+        colorType = TypeFactory.createType(SCALAR);
+        colorType.setIdentifier(colorId);
+        colorId.setDefinition(DefinitionImpl.TYPE);
+        colorId.setTypeSpec(colorType);
+        
         // Undefined type.
         undefinedType = TypeFactory.createType(SCALAR);
     }
