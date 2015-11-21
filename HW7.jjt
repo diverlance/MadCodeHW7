@@ -1,17 +1,10 @@
 /**
  * JJTree template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+
- */
-options
-{
-  IGNORE_CASE=true;
+ */options{  IGNORE_CASE=true;
     JJTREE_OUTPUT_DIRECTORY="wci/frontend";
     NODE_EXTENDS="wci.intermediate.icodeimpl.ICodeNodeImpl";
     MULTI=true;
-    VISITOR=true;
-}
-
-PARSER_BEGIN(HtScrape)
-package wci.frontend;
+    VISITOR=true;}PARSER_BEGIN(HtScrape)package wci.frontend;
 
 import java.util.ArrayList;
 import java.io.*;
@@ -27,14 +20,7 @@ import static wci.intermediate.symtabimpl.RoutineCodeImpl.*;
 import static wci.intermediate.symtabimpl.SymTabKeyImpl.*;
 import static wci.intermediate.icodeimpl.ICodeKeyImpl.*;
 
-public class HtScrape
-{
-  public static void main(String args [])
-  {
-    Reader sr = new StringReader("input.txt");
-    HtScrape ht = new HtScrape(sr);
-    SimpleNode node = parser.program();
-    try {
+public class HtScrape{  public static void main(String args [])  {    Reader sr = new StringReader("input.txt");    HtScrape ht = new HtScrape(sr);    try {
         java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader("input.txt"));
       	StringBuilder sb = new StringBuilder();
 		String line = "";
@@ -44,80 +30,17 @@ public class HtScrape
         java.io.StringReader sr = new java.io.StringReader(sb.toString());
         HtScrape parser = new HtScrape(sr);
        
-       node = HtScrape.Program();
-     	node.dump(">");
-      System.out.println("Thank you.");
-        }
-        catch (ParseException ex) {
-            errorHandler(ex);
-        }
-        catch (Exception e) {
+      	SimpleNode n = HtScrape.Program();
+     	n.dump(">");
+      	System.out.println("Thank you.");
+    }
+    catch (ParseException ex) {
+            ex.printStackTrace();
+    }
+    catch (Exception e) {
             e.printStackTrace();
-        }
-
-    // Print the cross-reference table
-    CrossReferencer crossReferencer = new CrossReferencer();
-    crossReferencer.print(symTabStack);
-
-    // Give the tree nodes type information
-    TypeSetterVisitor typeVisitor = new TypeSetterVisitor();
-    node.jjtAccept(typeVisitor, null);
-
-    ICode iCode = ICodeFactory.createICode();
-    iCode.setRoot(node);
-    programId.setAttribute(ROUTINE_ICODE, iCode);
-        
-    // Print the parse tree
-    ParseTreePrinter treePrinter = new ParseTreePrinter(System.out);
-    treePrinter.print(symTabStack);
-  }
-}
-
-PARSER_END(HtScrape)
-
-SKIP :
-{
-  " "
-| "\t"
-| "\n"
-| "\r"
-| < "//" (~[ "\n", "\r" ])*
-    (
-      "\n"
-    | "\r"
-    | "\r\n"
-    ) >
-| < "/*" (~[ "*" ])* "*"
-    (
-      ~[ "/" ] (~[ "*" ])* "*"
-    )*
-    "/" >
-}
-
-TOKEN : /* LITERALS */
-{
-  < INTEGER_LITERAL :
-    < DECIMAL_LITERAL > ([ "l", "L" ])?
-  | < HEX_LITERAL > ([ "l", "L" ])?
-  | < OCTAL_LITERAL > ([ "l", "L" ])? 
-    >
-| < #DECIMAL_LITERAL : [ "1"-"9" ] ([ "0"-"9" ])* >
-| < #HEX_LITERAL : "0" [ "x", "X" ] ([ "0"-"9", "a"-"f", "A"-"F" ])+ >
-| < #OCTAL_LITERAL : "0" ([ "0"-"7" ])* >
-}
-
-/*TOKEN :  IDENTIFIERS
-{
-  < IDENTIFIER :
-    < LETTER >
-    (
-      < LETTER >
-    | < DIGIT >
-    )* >
-| < #LETTER : [ "_", "a"-"z", "A"-"Z" ] >
-| < #DIGIT : [ "0"-"9" ] >
-} */
-
+    }  }}PARSER_END(HtScrape)SKIP :{  " "| "\t"| "\n"| "\r"| < "//" (~[ "\n", "\r" ])*    (      "\n"    | "\r"    | "\r\n"    ) >| < "/*" (~[ "*" ])* "*"    (      ~[ "/" ] (~[ "*" ])* "*"    )*    "/" >}
+TOKEN : /* LITERALS */{  < INTEGER_LITERAL :    < DECIMAL_LITERAL > ([ "l", "L" ])?  | < HEX_LITERAL > ([ "l", "L" ])?  | < OCTAL_LITERAL > ([ "l", "L" ])?     >| < #DECIMAL_LITERAL : [ "1"-"9" ] ([ "0"-"9" ])* >| < #HEX_LITERAL : "0" [ "x", "X" ] ([ "0"-"9", "a"-"f", "A"-"F" ])+ >| < #OCTAL_LITERAL : "0" ([ "0"-"7" ])* >}/*TOKEN :  IDENTIFIERS{  < IDENTIFIER :    < LETTER >    (      < LETTER >    | < DIGIT >    )* >| < #LETTER : [ "_", "a"-"z", "A"-"Z" ] >| < #DIGIT : [ "0"-"9" ] >} */
 TOKEN: /*HtScrape Tokens */
 {
   	<STRING_LITERAL:"\"" (~["\n","\r","\""])* ("\""|"\n"|"\r"|"\r\n")>
@@ -265,14 +188,27 @@ TOKEN: /*HtScrape Tokens */
 	{ debugStream.println("POUND_SIGN token: " + matchedToken.image); }
 }
 
+TOKEN: /*ERROR TOKEN*/{
+	< ERROR : ~["\r","\n"] >
+	{ debugStream.println("ERROR_SIGN token: " + matchedToken.image); }
+}
+
+	
 	//production rules
-	SimpleNode Program(): {}
+	SimpleNode Program(): {SimpleNode rootNode;}
 	{
+	 try {
 	  (Statement())+
 	  < EOF >
-	  { System.out.println("\n** Successfully parsed an entire Program!\n");
-	  return jjtThis; }
-	  
+	  {
+	    System.out.println("\n** Successfully parsed an entire Program!\n");
+	  	return jjtThis;
+	  	}
+	 }
+	   catch (ParseException ex) {
+        	handleError(ex);
+        	return null;
+	  }
 	}
 	
 	void Statement() : {}
@@ -465,14 +401,19 @@ TOKEN: /*HtScrape Tokens */
 	  (< PLUS >|< MINUS >|< EQUALS >|< GREATER_THAN >|< LESS_THAN >)
 	}
 
-//Handles errors when parsing
-JAVACODE 
-public String errorHandler(ParseException exception) 
-{
-    Token token = exception.currentToken;
-    System.out.println(ex.getMessage());
-    do {token = getNextToken();} 
-    while (token.kind != SEMICOLON);
-    jjtThis.popNode();
-    return token.image;
-}
+	void Error() #void : {}
+	{
+    	<ERROR>
+	}
+
+	JAVACODE
+	String handleError(ParseException ex) #void
+	{
+	    Token token = ex.currentToken;
+	    System.out.println(ex.getMessage());
+	
+	    token = getNextToken();
+	
+		jjtree.popNode();
+	    return token.image;
+	}
