@@ -131,10 +131,17 @@ TOKEN: /*HtScrape Tokens */
     <CHARACTER:
     "'"(["a"-"z", "A"-"Z", "_"]|"\\"|["0"-"9"])"'"
     >  { debugStream.println("CHARACTER token: " + matchedToken.image); }
-    |
-    <DIGIT:
-    ["0"-"9"]
+	| 
+    < INTEGER: ["1"-"9"](["0"-"9"])* | "0"(["0"-"7"])* | ("0x"|"0X")(["0"-"9"]|["a"-"z", "A"-"Z"])+ > 
+	{ debugStream.println("INTEGER token: " + matchedToken.image); }
+  	| 
+    < NUMBER:
+    (["0"-"9"])+ "." (["0"-"9"])*(["E","e"] (["+","-"])? (["0"-"9"])+)? |
+	(["0"-"9"])+ (".")? (["0"-"9"])* ["E","e"] (["+","-"])? (["0"-"9"])+ |
+	(["0"-"9"])* "." (["0"-"9"])+ (["E","e"] (["+","-"])? (["0"-"9"])+)? |
+	(["0"-"9"])* (".")? (["0"-"9"])+ ["E","e"] (["+","-"])? (["0"-"9"])+
     >
+   	{ debugStream.println("NUMBER token: " + matchedToken.image); }
   	| //reserved words
     <IF: "if" >
     { debugStream.println("IF token: " + matchedToken.image); }
@@ -162,9 +169,7 @@ TOKEN: /*HtScrape Tokens */
     |
     < INT: "int" >
     { debugStream.println("INT token: " + matchedToken.image); }
-    |
-    < NUMBER: "number" >
-    { debugStream.println("NUMBER token: " + matchedToken.image); }
+
   	|
   	< STRING: "string">
   	{ debugStream.println("STRING token: " + matchedToken.image); }
@@ -249,7 +254,7 @@ TOKEN: /*HtScrape Tokens */
 	{ debugStream.println("LESS_THAN token: " + matchedToken.image); }
 	|
 	< GREATER_THAN: ">" >
-	{ debugStream.println("GREATER_THAN token: " + matchedToken.image); }
+	{ debugStream.println("GREATER_TAHN token: " + matchedToken.image); }
 	|
 	< BANG: "!" >
 	{ debugStream.println("BANG token: " + matchedToken.image); }
@@ -352,8 +357,6 @@ TOKEN: /*HtScrape Tokens */
 	    System.out.println("Successfully parsed an Int Declaration!\n");
 	  }
 	}
-
-
 	
 	void SimpleAssignment() : {}
 	{
@@ -480,11 +483,11 @@ TOKEN: /*HtScrape Tokens */
 	
 	void MultipleParams() : {}
 	{
-	  (< IDENTIFIER >|(< DIGIT >)+)
+	  (< IDENTIFIER >|(< INTEGER >)+)
 	  (
 	    < COMMA >
 	    (
-	      < IDENTIFIER >|(< DIGIT >)+)
+	      < IDENTIFIER >|(< INTEGER >)+)
 	  )*
 	  { System.out.println("Successfully parsed multiple parameters!\n"); }
 	}
@@ -510,9 +513,11 @@ TOKEN: /*HtScrape Tokens */
 	}
 	
     void IfStatement() : {} {
-  		<IF><LEFT_PAREN>
+  		<IF>
+  		<LEFT_PAREN>
   		Expression()
-  		<RIGHT_PAREN><LEFT_CURLY >
+  		<RIGHT_PAREN>
+  		<LEFT_CURLY >
   		Statement()
   		<RIGHT_CURLY >
     	{ System.out.println("Successfully parsed an if statement!\n"); }
@@ -520,32 +525,38 @@ TOKEN: /*HtScrape Tokens */
 	
 	void Expression() : {} 
 	{
-  		{System.out.println("\nEXPRESSION STARTS");}
+  		{System.out.println("EXPRESSION STARTS");}
+  		
   		Operator()
-  		{System.out.println("EXPRESSION ENDS\n");}
+  		
+  		{System.out.println("EXPRESSION ENDS");}
 	}
 
 	void Operator() : {} 
 	{
-  		<IDENTIFIER> 
+  		Operand()
   		expr_operator()  
   		Operand()
 	}
 	
 	void Operand() : {Token t;} 
 	{
- 		 t=<DIGIT> {System.out.println("Operand: " + t.image);}
+ 		(
+ 			  < IDENTIFIER > 		 	| < INTEGER >
+ 		 	| < INT >
+ 		 	| < NUMBER >
+ 		)
 	}
 
 	void expr_operator() :{Token t;	}
 	{
-	  {System.out.println("Operator:");}
-	  (< PLUS >|< MINUS >|< EQUALS >|< GREATER_THAN >|< LESS_THAN >)
+	  {System.out.print("Operator:");}
+	  ( < GREATER_THAN > | < LESS_THAN > )
 	}
 
 	void integerConstant() : {}
 	{
-    <DIGIT> {
+    <INTEGER> {
         jjtThis.setTypeSpec(Predefined.integerType);
         jjtThis.setAttribute(VALUE, Integer.parseInt(token.image));
     	}
