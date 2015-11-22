@@ -104,6 +104,10 @@ public interface HtScrapeConstants {
   int AT_SIGN = 52;
   /** RegularExpression Id. */
   int POUND_SIGN = 53;
+  /** RegularExpression Id. */
+  int LETTER = 54;
+  /** RegularExpression Id. */
+  int DIGIT = 55;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -164,6 +168,8 @@ public interface HtScrapeConstants {
     "\";\"",
     "\"@\"",
     "\"#\"",
+    "<LETTER>",
+    "<DIGIT>",
   };
 
 }

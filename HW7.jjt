@@ -201,7 +201,7 @@ TOKEN: /*HtScrape Tokens */
  	< GET_COLOR: "getColor" >
 	{ debugStream.println("GET_COLOR token: " + matchedToken.image); }
  	|  
-    <IDENTIFIER: (["a"-"z", "A"-"Z"])(["a"-"z", "A"-"Z", "0"-"9","_", "-"])* >  
+    < IDENTIFIER : < LETTER > ( < LETTER > | < DIGIT > )* >
    	{ debugStream.println("IDENTIFIER token: " + matchedToken.image); }
     |
 	// SPECIAL SYMBOLS
@@ -249,6 +249,10 @@ TOKEN: /*HtScrape Tokens */
 	|
 	< POUND_SIGN: "#" >
 	{ debugStream.println("POUND_SIGN token: " + matchedToken.image); }
+	|
+	< #LETTER : [ "_", "a"-"z", "A"-"Z" ] >
+	|
+	< #DIGIT : [ "0"-"9" ] >
 }
 
 	//production rules
@@ -506,40 +510,41 @@ TOKEN: /*HtScrape Tokens */
 	}
 	
     void IfStatement() : {} {
-  		<IF><LEFT_PAREN>
-  		Expression()
-  		<RIGHT_PAREN><LEFT_CURLY >
-  		Statement()
+  		<IF><LEFT_PAREN>Expression()<RIGHT_PAREN>
+  		<LEFT_CURLY >
+  			Statement()
   		<RIGHT_CURLY >
     	{ System.out.println("Successfully parsed an if statement!\n"); }
 	}
 	
 	void Expression() : {} 
 	{
-  		{System.out.println("\nEXPRESSION STARTS");}
+  		{System.out.println("EXPRESSION STARTS");}
   		Operator()
-  		{System.out.println("EXPRESSION ENDS\n");}
+  		{System.out.println("EXPRESSION ENDS");}
 	}
 
 	void Operator() : {} 
 	{
-  		variable() 
+  		Operand()
   		expr_operator()  
   		Operand()
 	}
 	
 	void Operand() : {Token t;} 
 	{
- 		 t=< INTEGER >
+	  	variable() 
+ 		|  t=< INTEGER >
  		  {
  		    jjtThis.setAttribute(ID, token);
- 		    System.out.println("Operand: " + t.image);}
+ 		    System.out.println("Operand: " + t.image);
+ 		  }
 	}
 	
 	void expr_operator() :{Token t;	}
 	{
 	  {System.out.println("Operator:");}
-	  (< PLUS >|< MINUS >|< EQUALS >|< GREATER_THAN >|< LESS_THAN >)
+	  (< GREATER_THAN >|< LESS_THAN >)
 	  {
 	    jjtThis.setAttribute(ID, token);	  }
 	}

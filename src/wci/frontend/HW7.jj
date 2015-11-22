@@ -205,7 +205,7 @@ TOKEN: /*HtScrape Tokens */
  	< GET_COLOR: "getColor" >
 	{ debugStream.println("GET_COLOR token: " + matchedToken.image); }
  	|  
-    <IDENTIFIER: (["a"-"z", "A"-"Z"])(["a"-"z", "A"-"Z", "0"-"9","_", "-"])* >  
+    < IDENTIFIER : < LETTER > ( < LETTER > | < DIGIT > )* >
    	{ debugStream.println("IDENTIFIER token: " + matchedToken.image); }
     |
 	// SPECIAL SYMBOLS
@@ -253,6 +253,10 @@ TOKEN: /*HtScrape Tokens */
 	|
 	< POUND_SIGN: "#" >
 	{ debugStream.println("POUND_SIGN token: " + matchedToken.image); }
+	|
+	< #LETTER : [ "_", "a"-"z", "A"-"Z" ] >
+	|
+	< #DIGIT : [ "0"-"9" ] >
 }
 
 	//production rules
@@ -1072,10 +1076,9 @@ TOKEN: /*HtScrape Tokens */
 /*@egen*/} {/*@bgen(jjtree) IfStatement */
                 try {
 /*@egen*/
-  		<IF><LEFT_PAREN>
-  		Expression()
-  		<RIGHT_PAREN><LEFT_CURLY >
-  		Statement()
+  		<IF><LEFT_PAREN>Expression()<RIGHT_PAREN>
+  		<LEFT_CURLY >
+  			Statement()
   		<RIGHT_CURLY >/*@bgen(jjtree)*/
         {
           jjtree.closeNodeScope(jjtn000, true);
@@ -1113,14 +1116,14 @@ TOKEN: /*HtScrape Tokens */
 	{/*@bgen(jjtree) Expression */
                 try {
 /*@egen*/
-  		{System.out.println("\nEXPRESSION STARTS");}
+  		{System.out.println("EXPRESSION STARTS");}
   		Operator()/*@bgen(jjtree)*/
                 {
                   jjtree.closeNodeScope(jjtn000, true);
                   jjtc000 = false;
                 }
 /*@egen*/
-  		{System.out.println("EXPRESSION ENDS\n");}/*@bgen(jjtree)*/
+  		{System.out.println("EXPRESSION ENDS");}/*@bgen(jjtree)*/
                 } catch (Throwable jjte000) {
                   if (jjtc000) {
                     jjtree.clearNodeScope(jjtn000);
@@ -1151,7 +1154,7 @@ TOKEN: /*HtScrape Tokens */
 	{/*@bgen(jjtree) Operator */
                 try {
 /*@egen*/
-  		variable() 
+  		Operand()
   		expr_operator()  
   		Operand()/*@bgen(jjtree)*/
                 } catch (Throwable jjte000) {
@@ -1182,9 +1185,10 @@ TOKEN: /*HtScrape Tokens */
                           jjtree.openNodeScope(jjtn000);
 /*@egen*/Token t;} 
 	{/*@bgen(jjtree) Operand */
-                 try {
+                try {
 /*@egen*/
- 		 t=< INTEGER >/*@bgen(jjtree)*/
+	  	variable() 
+ 		|  t=< INTEGER >/*@bgen(jjtree)*/
                   {
                     jjtree.closeNodeScope(jjtn000, true);
                     jjtc000 = false;
@@ -1192,12 +1196,27 @@ TOKEN: /*HtScrape Tokens */
 /*@egen*/
  		  {
  		    jjtn000.setAttribute(ID, token);
- 		    System.out.println("Operand: " + t.image);}/*@bgen(jjtree)*/
-                 } finally {
-                   if (jjtc000) {
-                     jjtree.closeNodeScope(jjtn000, true);
-                   }
-                 }
+ 		    System.out.println("Operand: " + t.image);
+ 		  }/*@bgen(jjtree)*/
+                } catch (Throwable jjte000) {
+                  if (jjtc000) {
+                    jjtree.clearNodeScope(jjtn000);
+                    jjtc000 = false;
+                  } else {
+                    jjtree.popNode();
+                  }
+                  if (jjte000 instanceof RuntimeException) {
+                    throw (RuntimeException)jjte000;
+                  }
+                  if (jjte000 instanceof ParseException) {
+                    throw (ParseException)jjte000;
+                  }
+                  throw (Error)jjte000;
+                } finally {
+                  if (jjtc000) {
+                    jjtree.closeNodeScope(jjtn000, true);
+                  }
+                }
 /*@egen*/
 	}
 	
@@ -1210,7 +1229,7 @@ TOKEN: /*HtScrape Tokens */
           try {
 /*@egen*/
 	  {System.out.println("Operator:");}
-	  (< PLUS >|< MINUS >|< EQUALS >|< GREATER_THAN >|< LESS_THAN >)/*@bgen(jjtree)*/
+	  (< GREATER_THAN >|< LESS_THAN >)/*@bgen(jjtree)*/
           {
             jjtree.closeNodeScope(jjtn000, true);
             jjtc000 = false;
