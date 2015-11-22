@@ -1,0 +1,257 @@
+INT token: int
+IDENTIFIER token: i
+EQUALS token: =
+INTEGER token: 3
+SEMICOLON token: ;
+Successfully parsed an Int Declaration!
+
+STRING token: string
+IDENTIFIER token: filename
+EQUALS token: =
+STRING_LITERAL token: "newpage.html"
+SEMICOLON token: ;
+Successfully parsed a String Declaration!
+
+INT token: int
+IDENTIFIER token: j
+EQUALS token: =
+INTEGER token: 4
+SEMICOLON token: ;
+Successfully parsed an Int Declaration!
+
+IDENTIFIER token: i
+EQUALS token: =
+INTEGER token: 7
+SEMICOLON token: ;
+Successfully parsed a Simple Assignment!
+
+IDENTIFIER token: j
+EQUALS token: =
+INTEGER token: 2
+SEMICOLON token: ;
+Successfully parsed a Simple Assignment!
+
+FILE token: file
+IDENTIFIER token: webpage
+EQUALS token: =
+LOAD token: load
+LEFT_PAREN token: (
+IDENTIFIER token: filename
+RIGHT_PAREN token: )
+SEMICOLON token: ;
+Successfully parsed a Load Statement!
+
+Successfully parsed a File Declaration!
+
+TABLE token: table
+IDENTIFIER token: t
+EQUALS token: =
+GET_TABLE token: getTable
+LEFT_PAREN token: (
+IDENTIFIER token: webpage
+RIGHT_PAREN token: )
+SEMICOLON token: ;
+Successfully parsed a GetTable Statement!
+
+Successfully parsed a Table Declaration!
+
+TABLE_DATA token: table_data
+IDENTIFIER token: td
+EQUALS token: =
+GET_DATA token: getData
+LEFT_PAREN token: (
+INTEGER token: 1
+COMMA token: ,
+INTEGER token: 2
+COMMA token: ,
+IDENTIFIER token: t
+RIGHT_PAREN token: )
+Successfully parsed multiple parameters!
+
+SEMICOLON token: ;
+Successfully parsed a GetTableData Statement!
+
+Successfully parsed a TableData Declaration!
+
+COLOR token: color
+IDENTIFIER token: c
+EQUALS token: =
+GET_COLOR token: getColor
+LEFT_PAREN token: (
+INTEGER token: 1
+COMMA token: ,
+INTEGER token: 2
+COMMA token: ,
+IDENTIFIER token: t
+RIGHT_PAREN token: )
+Successfully parsed multiple parameters!
+
+SEMICOLON token: ;
+Successfully parsed a GetColor Statement!
+
+Successfully parsed a Color Declaration!
+
+PRINT token: print
+LEFT_PAREN token: (
+IDENTIFIER token: t
+RIGHT_PAREN token: )
+SEMICOLON token: ;
+Successfully parsed a Print Statement!
+
+PRINT token: print
+LEFT_PAREN token: (
+IDENTIFIER token: td
+RIGHT_PAREN token: )
+SEMICOLON token: ;
+Successfully parsed a Print Statement!
+
+CLOSE token: close
+LEFT_PAREN token: (
+IDENTIFIER token: webpage
+RIGHT_PAREN token: )
+SEMICOLON token: ;
+Successfully parsed a Close Statement!
+
+IF token: if
+LEFT_PAREN token: (
+
+EXPRESSION STARTS
+IDENTIFIER token: i
+Operator:
+LESS_THAN token: <
+INTEGER token: 0
+Operand: 0
+EXPRESSION ENDS
+
+RIGHT_PAREN token: )
+LEFT_CURLY token: {
+IDENTIFIER token: i
+EQUALS token: =
+INTEGER token: 0
+SEMICOLON token: ;
+Successfully parsed a Simple Assignment!
+
+RIGHT_CURLY token: }
+Successfully parsed an if statement!
+
+
+** Successfully parsed an entire Program!
+
+
+===== CROSS-REFERENCE TABLE =====
+
+*** PROGRAM Prorgam ***
+
+Identifier       Line numbers    Type specification
+----------       ------------    ------------------
+c                009
+                                 Defined as: variable
+                                 Scope nesting level: 1
+                                 Type form = scalar, Type id = color
+filename         002 006
+                                 Defined as: variable
+                                 Scope nesting level: 1
+                                 Type form = array, Type id = string
+i                001 004 013 015
+                                 Defined as: variable
+                                 Scope nesting level: 1
+                                 Type form = scalar, Type id = int
+j                003 005
+                                 Defined as: variable
+                                 Scope nesting level: 1
+                                 Type form = scalar, Type id = int
+t                007 008 009 010
+                                 Defined as: variable
+                                 Scope nesting level: 1
+                                 Type form = scalar, Type id = table
+td               008 011
+                                 Defined as: variable
+                                 Scope nesting level: 1
+                                 Type form = scalar, Type id = table_data
+webpage          006 007 012
+                                 Defined as: variable
+                                 Scope nesting level: 1
+                                 Type form = scalar, Type id = file
+
+===== INTERMEDIATE CODE =====
+
+*** PROGRAM Prorgam ***
+
+<Statement>
+    <IntDeclaration type_id="int">
+        <newVariable id="i" type_id="int" />
+        <integerConstant value="3" type_id="int" />
+    </IntDeclaration>
+    <StringDeclaration type_id="int">
+        <newVariable id="filename" type_id="string" />
+        <stringConstant value=""newpage.html"" type_id="string" />
+    </StringDeclaration>
+    <IntDeclaration type_id="int">
+        <newVariable id="j" type_id="int" />
+        <integerConstant value="4" type_id="int" />
+    </IntDeclaration>
+    <SimpleAssignment type_id="int">
+        <variable id="i" level="1" index="0" type_id="int" />
+        <integerConstant value="7" type_id="int" />
+    </SimpleAssignment>
+    <SimpleAssignment type_id="int">
+        <variable id="j" level="1" index="2" type_id="int" />
+        <integerConstant value="2" type_id="int" />
+    </SimpleAssignment>
+    <FileDeclaration>
+        <newVariable id="webpage" type_id="file" />
+        <LoadStatement>
+            <variable id="filename" level="1" index="1" type_id="string" />
+        </LoadStatement>
+    </FileDeclaration>
+    <TableDeclaration>
+        <newVariable id="t" type_id="table" />
+        <GetTableStatement>
+            <variable id="webpage" level="1" index="3" type_id="file" />
+        </GetTableStatement>
+    </TableDeclaration>
+    <TableDataDeclaration>
+        <newVariable id="td" type_id="table_data" />
+        <GetTableDataStatement>
+            <MultipleParams>
+                <integerConstant value="1" type_id="int" />
+                <integerConstant value="2" type_id="int" />
+                <variable id="t" level="1" index="4" type_id="table" />
+            </MultipleParams>
+        </GetTableDataStatement>
+    </TableDataDeclaration>
+    <ColorDeclaration>
+        <newVariable id="c" type_id="color" />
+        <GetColorStatement>
+            <MultipleParams>
+                <integerConstant value="1" type_id="int" />
+                <integerConstant value="2" type_id="int" />
+                <variable id="t" level="1" index="4" type_id="table" />
+            </MultipleParams>
+        </GetColorStatement>
+    </ColorDeclaration>
+    <PrintStatement>
+        <variable id="t" level="1" index="4" type_id="table" />
+    </PrintStatement>
+    <PrintStatement>
+        <variable id="td" level="1" index="5" type_id="table_data" />
+    </PrintStatement>
+    <CloseStatement>
+        <variable id="webpage" level="1" index="3" type_id="file" />
+    </CloseStatement>
+    <IfStatement>
+        <Expression>
+            <Operator>
+                <variable id="i" level="1" index="0" type_id="int" />
+                <expr_operator id="<" />
+                <Operand id="0" />
+            </Operator>
+        </Expression>
+        <Statement>
+            <SimpleAssignment type_id="int">
+                <variable id="i" level="1" index="0" type_id="int" />
+                <integerConstant value="0" type_id="int" />
+            </SimpleAssignment>
+        </Statement>
+    </IfStatement>
+</Statement>

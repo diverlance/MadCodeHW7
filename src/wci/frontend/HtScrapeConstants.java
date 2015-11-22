@@ -11,107 +11,99 @@ public interface HtScrapeConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int INTEGER_LITERAL = 7;
+  int STRING_LITERAL = 7;
   /** RegularExpression Id. */
-  int DECIMAL_LITERAL = 8;
+  int CHARACTER = 8;
   /** RegularExpression Id. */
-  int HEX_LITERAL = 9;
+  int INTEGER = 9;
   /** RegularExpression Id. */
-  int OCTAL_LITERAL = 10;
+  int NUMBER = 10;
   /** RegularExpression Id. */
-  int STRING_LITERAL = 11;
+  int IF = 11;
   /** RegularExpression Id. */
-  int CHARACTER = 12;
+  int ELSE = 12;
   /** RegularExpression Id. */
-  int DIGIT = 13;
+  int THEN = 13;
   /** RegularExpression Id. */
-  int IF = 14;
+  int EXIT = 14;
   /** RegularExpression Id. */
-  int ELSE = 15;
+  int THROW = 15;
   /** RegularExpression Id. */
-  int THEN = 16;
+  int BREAK = 16;
   /** RegularExpression Id. */
-  int EXIT = 17;
+  int VOID = 17;
   /** RegularExpression Id. */
-  int THROW = 18;
+  int RETURN = 18;
   /** RegularExpression Id. */
-  int BREAK = 19;
+  int INT = 19;
   /** RegularExpression Id. */
-  int VOID = 20;
+  int STRING = 20;
   /** RegularExpression Id. */
-  int RETURN = 21;
+  int TRUE = 21;
   /** RegularExpression Id. */
-  int INT = 22;
+  int FALSE = 22;
   /** RegularExpression Id. */
-  int NUMBER = 23;
+  int TRY = 23;
   /** RegularExpression Id. */
-  int STRING = 24;
+  int CATCH = 24;
   /** RegularExpression Id. */
-  int TRUE = 25;
+  int FOR = 25;
   /** RegularExpression Id. */
-  int FALSE = 26;
+  int NULL = 26;
   /** RegularExpression Id. */
-  int TRY = 27;
+  int TABLE = 27;
   /** RegularExpression Id. */
-  int CATCH = 28;
+  int TABLE_DATA = 28;
   /** RegularExpression Id. */
-  int FOR = 29;
+  int COLOR = 29;
   /** RegularExpression Id. */
-  int NULL = 30;
+  int GET = 30;
   /** RegularExpression Id. */
-  int TABLE = 31;
+  int PRINT = 31;
   /** RegularExpression Id. */
-  int TABLE_DATA = 32;
+  int CLOSE = 32;
   /** RegularExpression Id. */
-  int COLOR = 33;
+  int FILE = 33;
   /** RegularExpression Id. */
-  int GET = 34;
+  int LOAD = 34;
   /** RegularExpression Id. */
-  int PRINT = 35;
+  int GET_TABLE = 35;
   /** RegularExpression Id. */
-  int CLOSE = 36;
+  int GET_DATA = 36;
   /** RegularExpression Id. */
-  int FILE = 37;
+  int GET_COLOR = 37;
   /** RegularExpression Id. */
-  int LOAD = 38;
+  int IDENTIFIER = 38;
   /** RegularExpression Id. */
-  int GET_TABLE = 39;
+  int LEFT_PAREN = 39;
   /** RegularExpression Id. */
-  int GET_DATA = 40;
+  int RIGHT_PAREN = 40;
   /** RegularExpression Id. */
-  int GET_COLOR = 41;
+  int LEFT_CURLY = 41;
   /** RegularExpression Id. */
-  int IDENTIFIER = 42;
+  int RIGHT_CURLY = 42;
   /** RegularExpression Id. */
-  int LEFT_PAREN = 43;
+  int PLUS = 43;
   /** RegularExpression Id. */
-  int RIGHT_PAREN = 44;
+  int MINUS = 44;
   /** RegularExpression Id. */
-  int LEFT_CURLY = 45;
+  int EQUALS = 45;
   /** RegularExpression Id. */
-  int RIGHT_CURLY = 46;
+  int LESS_THAN = 46;
   /** RegularExpression Id. */
-  int PLUS = 47;
+  int GREATER_THAN = 47;
   /** RegularExpression Id. */
-  int MINUS = 48;
+  int BANG = 48;
   /** RegularExpression Id. */
-  int EQUALS = 49;
+  int COMMA = 49;
   /** RegularExpression Id. */
-  int LESS_THAN = 50;
+  int PERIOD = 50;
   /** RegularExpression Id. */
-  int GREATER_THAN = 51;
+  int SEMICOLON = 51;
   /** RegularExpression Id. */
-  int BANG = 52;
+  int AT_SIGN = 52;
   /** RegularExpression Id. */
-  int COMMA = 53;
-  /** RegularExpression Id. */
-  int PERIOD = 54;
-  /** RegularExpression Id. */
-  int SEMICOLON = 55;
-  /** RegularExpression Id. */
-  int AT_SIGN = 56;
-  /** RegularExpression Id. */
-  int POUND_SIGN = 57;
+  int POUND_SIGN = 53;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -125,13 +117,10 @@ public interface HtScrapeConstants {
     "\"\\r\"",
     "<token of kind 5>",
     "<token of kind 6>",
-    "<INTEGER_LITERAL>",
-    "<DECIMAL_LITERAL>",
-    "<HEX_LITERAL>",
-    "<OCTAL_LITERAL>",
     "<STRING_LITERAL>",
     "<CHARACTER>",
-    "<DIGIT>",
+    "<INTEGER>",
+    "<NUMBER>",
     "\"if\"",
     "\"else\"",
     "\"then\"",
@@ -141,7 +130,6 @@ public interface HtScrapeConstants {
     "\"void\"",
     "\"return\"",
     "\"int\"",
-    "\"number\"",
     "\"string\"",
     "\"true\"",
     "\"false\"",

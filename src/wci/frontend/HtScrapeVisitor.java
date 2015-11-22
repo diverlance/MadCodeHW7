@@ -6,7 +6,10 @@ public interface HtScrapeVisitor
   public Object visit(SimpleNode node, Object data);
   public Object visit(ASTProgram node, Object data);
   public Object visit(ASTStatement node, Object data);
+  public Object visit(ASTvariable node, Object data);
+  public Object visit(ASTnewVariable node, Object data);
   public Object visit(ASTIntDeclaration node, Object data);
+  public Object visit(ASTNumberDeclaration node, Object data);
   public Object visit(ASTSimpleAssignment node, Object data);
   public Object visit(ASTStringDeclaration node, Object data);
   public Object visit(ASTFileDeclaration node, Object data);
@@ -25,5 +28,8 @@ public interface HtScrapeVisitor
   public Object visit(ASTOperator node, Object data);
   public Object visit(ASTOperand node, Object data);
   public Object visit(ASTexpr_operator node, Object data);
+  public Object visit(ASTintegerConstant node, Object data);
+  public Object visit(ASTnumberConstant node, Object data);
+  public Object visit(ASTstringConstant node, Object data);
 }
-/* JavaCC - OriginalChecksum=31432a1e96579eea3d263649ec6310ca (do not edit this line) */
+/* JavaCC - OriginalChecksum=59ba444bc5671b587f20804705a0d57b (do not edit this line) */
