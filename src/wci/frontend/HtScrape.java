@@ -34,7 +34,7 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
 
         // Process the source file path which ends in .pcl
         // and create the output file path which ends in .j
-        String sourceFilePath = "input.txt";
+        String sourceFilePath = "errors.txt";
         int truncatedLength = sourceFilePath.length() - SOURCE_SUFFIX.length();
         int suffixIndex = sourceFilePath.lastIndexOf(SOURCE_SUFFIX);
         String objectFilePath = (suffixIndex == truncatedLength)
@@ -415,6 +415,7 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
 
   static final public void FileDeclaration() throws ParseException {
                                   /*@bgen(jjtree) FileDeclaration */
+        try{
   ASTFileDeclaration jjtn000 = new ASTFileDeclaration(JJTFILEDECLARATION);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -424,7 +425,7 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
         typeId.appendLineNumber(token.beginLine);
         TypeSpec type = typeId.getTypeSpec();
       newVariable(type);
-      jj_consume_token(EQUALS);
+        jj_consume_token(EQUALS);
       LoadStatement();
             jjtree.closeNodeScope(jjtn000, true);
             jjtc000 = false;
@@ -447,11 +448,16 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
             if (jjtc000) {
               jjtree.closeNodeScope(jjtn000, true);
             }
-    }
+    
+  }
+      }
+      catch(ParseException ex){handleError(ex);}
+  
   }
 
   static final public void LoadStatement() throws ParseException {
                                 /*@bgen(jjtree) LoadStatement */
+  try {
   ASTLoadStatement jjtn000 = new ASTLoadStatement(JJTLOADSTATEMENT);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -483,6 +489,8 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
               jjtree.closeNodeScope(jjtn000, true);
             }
     }
+  }
+    catch(ParseException ex){handleError(ex);}
   }
 
   static final public void TableDeclaration() throws ParseException {
@@ -1086,11 +1094,11 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
   static String handleError(ParseException ex) throws ParseException {
     Token token = ex.currentToken;
     System.out.println(ex.getMessage());
-
+    
     do {
         token = getNextToken();
-    } while (token.kind != SEMICOLON);
-
+    } while (token.toString() != ";");
+   
         jjtree.popNode();
     return token.image;
   }
