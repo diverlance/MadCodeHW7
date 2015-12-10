@@ -253,6 +253,10 @@ TOKEN: /*HtScrape Tokens */
 	< #LETTER : [ "_", "a"-"z", "A"-"Z" ] >
 	|
 	< #DIGIT : [ "0"-"9" ] >
+| <LESS_EQUAL : "<=">{ debugStream.println("LESS_EQUAL token: " + matchedToken.image); }
+| <GREATER_EQUAL : ">=">{ debugStream.println("GREATER_EQUAL token: " + matchedToken.image); }
+| <DOUBLE_EQUAL : "=="> { debugStream.println("DOUBLE_EQUAL token: " + matchedToken.image); }
+| <NOT_EQUAL : "!="> { debugStream.println("NOT_EQUAL token: " + matchedToken.image); }
 }
 
 	//production rules
@@ -509,7 +513,8 @@ TOKEN: /*HtScrape Tokens */
 	  { System.out.println("Successfully parsed a Close Statement!\n"); }
 	}
 	
-    void IfStatement() : {} {
+    void IfStatement() : {}
+    {
   		<IF><LEFT_PAREN>Expression()<RIGHT_PAREN>
   		<LEFT_CURLY >
   			Statement()
@@ -527,7 +532,7 @@ TOKEN: /*HtScrape Tokens */
 	void Operator() : {} 
 	{
   		Operand()
-  		expr_operator()  
+  		expr_operator()
   		Operand()
 	}
 	
@@ -544,7 +549,7 @@ TOKEN: /*HtScrape Tokens */
 	void expr_operator() :{Token t;	}
 	{
 	  {System.out.println("Operator:");}
-	  (< GREATER_THAN >|< LESS_THAN >)
+	  (< GREATER_THAN >|< LESS_THAN >|< LESS_EQUAL >|< GREATER_EQUAL >|< DOUBLE_EQUAL >|< NOT_EQUAL >)
 	  {
 	    jjtThis.setAttribute(ID, token);	  }
 	}
