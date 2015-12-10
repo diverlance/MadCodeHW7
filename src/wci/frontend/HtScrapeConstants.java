@@ -15,27 +15,27 @@ public interface HtScrapeConstants {
   /** RegularExpression Id. */
   int CHARACTER = 8;
   /** RegularExpression Id. */
-  int INTEGER = 9;
+  int DIGIT = 9;
   /** RegularExpression Id. */
-  int NUMBER = 10;
+  int IF = 10;
   /** RegularExpression Id. */
-  int IF = 11;
+  int ELSE = 11;
   /** RegularExpression Id. */
-  int ELSE = 12;
+  int THEN = 12;
   /** RegularExpression Id. */
-  int THEN = 13;
+  int EXIT = 13;
   /** RegularExpression Id. */
-  int EXIT = 14;
+  int THROW = 14;
   /** RegularExpression Id. */
-  int THROW = 15;
+  int BREAK = 15;
   /** RegularExpression Id. */
-  int BREAK = 16;
+  int VOID = 16;
   /** RegularExpression Id. */
-  int VOID = 17;
+  int RETURN = 17;
   /** RegularExpression Id. */
-  int RETURN = 18;
+  int INT = 18;
   /** RegularExpression Id. */
-  int INT = 19;
+  int NUMBER = 19;
   /** RegularExpression Id. */
   int STRING = 20;
   /** RegularExpression Id. */
@@ -104,10 +104,6 @@ public interface HtScrapeConstants {
   int AT_SIGN = 52;
   /** RegularExpression Id. */
   int POUND_SIGN = 53;
-  /** RegularExpression Id. */
-  int LETTER = 54;
-  /** RegularExpression Id. */
-  int DIGIT = 55;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -123,8 +119,7 @@ public interface HtScrapeConstants {
     "<token of kind 6>",
     "<STRING_LITERAL>",
     "<CHARACTER>",
-    "<INTEGER>",
-    "<NUMBER>",
+    "<DIGIT>",
     "\"if\"",
     "\"else\"",
     "\"then\"",
@@ -134,6 +129,7 @@ public interface HtScrapeConstants {
     "\"void\"",
     "\"return\"",
     "\"int\"",
+    "\"number\"",
     "\"string\"",
     "\"true\"",
     "\"false\"",
@@ -168,8 +164,6 @@ public interface HtScrapeConstants {
     "\";\"",
     "\"@\"",
     "\"#\"",
-    "<LETTER>",
-    "<DIGIT>",
   };
 
 }

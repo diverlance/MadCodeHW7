@@ -3,15 +3,10 @@ import wci.frontend.*;
 
 public class HtScrapeVisitorAdapter implements HtScrapeVisitor{
 
-	public Object visit(SimpleNode node, Object data)
-    {
-        return node.childrenAccept(this, data);
-    }
-    
-    public Object visit(ASTIntDeclaration node, Object data)
-    {
-        return node.childrenAccept(this, data);
-    }
+	@Override
+	public Object visit(SimpleNode node, Object data) {
+		return node.childrenAccept(this, data);
+	}
 
 	@Override
 	public Object visit(ASTProgram node, Object data) {
@@ -24,7 +19,27 @@ public class HtScrapeVisitorAdapter implements HtScrapeVisitor{
 	}
 
 	@Override
+	public Object visit(ASTvariable node, Object data) {
+		return node.childrenAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTnewVariable node, Object data) {
+		return node.childrenAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTIntDeclaration node, Object data) {
+		return node.childrenAccept(this, data);
+	}
+
+	@Override
 	public Object visit(ASTSimpleAssignment node, Object data) {
+		return node.childrenAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTComplexAssignment node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
@@ -114,16 +129,6 @@ public class HtScrapeVisitorAdapter implements HtScrapeVisitor{
 	}
 
 	@Override
-	public Object visit(ASTvariable node, Object data) {
-		return node.childrenAccept(this, data);
-	}
-
-	@Override
-	public Object visit(ASTnewVariable node, Object data) {
-		return node.childrenAccept(this, data);
-	}
-
-	@Override
 	public Object visit(ASTintegerConstant node, Object data) {
 		return node.childrenAccept(this, data);
 	}
@@ -133,14 +138,7 @@ public class HtScrapeVisitorAdapter implements HtScrapeVisitor{
 		return node.childrenAccept(this, data);
 	}
 
-	@Override
-	public Object visit(ASTNumberDeclaration node, Object data) {
-		return node.childrenAccept(this, data);
-	}
+	
 
-	@Override
-	public Object visit(ASTnumberConstant node, Object data) {
-		return node.childrenAccept(this, data);
-	}
     
 }

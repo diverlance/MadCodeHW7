@@ -8,8 +8,8 @@ public interface HtScrapeTreeConstants
   public int JJTVARIABLE = 2;
   public int JJTNEWVARIABLE = 3;
   public int JJTINTDECLARATION = 4;
-  public int JJTNUMBERDECLARATION = 5;
-  public int JJTSIMPLEASSIGNMENT = 6;
+  public int JJTSIMPLEASSIGNMENT = 5;
+  public int JJTCOMPLEXASSIGNMENT = 6;
   public int JJTSTRINGDECLARATION = 7;
   public int JJTFILEDECLARATION = 8;
   public int JJTLOADSTATEMENT = 9;
@@ -28,9 +28,8 @@ public interface HtScrapeTreeConstants
   public int JJTOPERAND = 22;
   public int JJTEXPR_OPERATOR = 23;
   public int JJTINTEGERCONSTANT = 24;
-  public int JJTNUMBERCONSTANT = 25;
-  public int JJTSTRINGCONSTANT = 26;
-  public int JJTVOID = 27;
+  public int JJTSTRINGCONSTANT = 25;
+  public int JJTVOID = 26;
 
 
   public String[] jjtNodeName = {
@@ -39,8 +38,8 @@ public interface HtScrapeTreeConstants
     "variable",
     "newVariable",
     "IntDeclaration",
-    "NumberDeclaration",
     "SimpleAssignment",
+    "ComplexAssignment",
     "StringDeclaration",
     "FileDeclaration",
     "LoadStatement",
@@ -59,9 +58,8 @@ public interface HtScrapeTreeConstants
     "Operand",
     "expr_operator",
     "integerConstant",
-    "numberConstant",
     "stringConstant",
     "void",
   };
 }
-/* JavaCC - OriginalChecksum=e0d0e117e2351655071cb727a5aa7634 (do not edit this line) */
+/* JavaCC - OriginalChecksum=4f29aec2a1a96d4b9a76c502ec47f0de (do not edit this line) */

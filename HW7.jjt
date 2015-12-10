@@ -8,6 +8,7 @@ options
     NODE_EXTENDS="wci.intermediate.icodeimpl.ICodeNodeImpl";
     MULTI=true;
     VISITOR=true;
+    //DEBUG_PARSER=true;
 }
 
 PARSER_BEGIN(HtScrape)
@@ -58,10 +59,10 @@ public class HtScrape
         Reader    reader = new FileReader(sourceFilePath);
         HtScrape parser = new HtScrape(reader);
         SimpleNode rootNode = parser.Program();
-        
-    // Print the cross-reference table
-    CrossReferencer crossReferencer = new CrossReferencer();
-    crossReferencer.print(symTabStack);
+
+    	// Print the cross-reference table
+   	 	CrossReferencer crossReferencer = new CrossReferencer();
+    	crossReferencer.print(symTabStack);
 
         // Visit the parse tree nodes to decorate them with type information.
         TypeSetterVisitor typeVisitor = new TypeSetterVisitor();
@@ -72,9 +73,13 @@ public class HtScrape
         iCode.setRoot(rootNode);
         programId.setAttribute(ROUTINE_ICODE, iCode);
         
-    // Print the parse tree
-    ParseTreePrinter treePrinter = new ParseTreePrinter(System.out);
-    treePrinter.print(symTabStack);
+    	// Print the parse tree
+    	ParseTreePrinter treePrinter = new ParseTreePrinter(System.out);
+    	treePrinter.print(symTabStack);
+
+   		 // Create the compiler backend and generate code.
+        Backend backend = BackendFactory.createBackend("compile");
+        backend.process(iCode, symTabStack, objectFilePath);
   }
 }
 
@@ -201,7 +206,7 @@ TOKEN: /*HtScrape Tokens */
  	< GET_COLOR: "getColor" >
 	{ debugStream.println("GET_COLOR token: " + matchedToken.image); }
  	|  
-    < IDENTIFIER : < LETTER > ( < LETTER > | < DIGIT > )* >
+    <IDENTIFIER: (["a"-"z", "A"-"Z"])(["a"-"z", "A"-"Z", "0"-"9","_", "-"])* >  
    	{ debugStream.println("IDENTIFIER token: " + matchedToken.image); }
     |
 	// SPECIAL SYMBOLS
@@ -262,21 +267,20 @@ TOKEN: /*HtScrape Tokens */
 	//production rules
 	SimpleNode Program(): {SimpleNode rootNode;}
 	{
-	  
 	  {
 	    programId = symTabStack.enterLocal("Prorgam");
         programId.setDefinition(DefinitionImpl.PROGRAM);
         programId.setAttribute(ROUTINE_SYMTAB, symTabStack.push());
-        symTabStack.setProgramId(programId);	  }
-	   
-        try {
+        symTabStack.setProgramId(programId);
+	  }
+	   try {
         rootNode = Statement()
         <EOF> {
           System.out.println("\n** Successfully parsed an entire Program!\n");
            return rootNode;
         }
     }
-   catch (ParseException ex) {
+    catch (ParseException ex) {
         handleError(ex);
         return null;
     }
@@ -291,6 +295,7 @@ TOKEN: /*HtScrape Tokens */
 	    NumberDeclaration() |
 	    StringDeclaration() |
 	    SimpleAssignment() |
+	    ComplexAssignment() |
 	    FileDeclaration() |
 	    LoadStatement() |
 	    TableDeclaration() |
@@ -303,7 +308,10 @@ TOKEN: /*HtScrape Tokens */
 	    CloseStatement() |
 	    IfStatement()
 	  )*
-	  {	    return jjtThis;	  }	  
+	  {
+	    return jjtThis;
+	  }
+	  
 	}
 
 	void variable() : {}
@@ -318,11 +326,16 @@ TOKEN: /*HtScrape Tokens */
 }
 
 	void newVariable(TypeSpec type) : {}
-	{		<IDENTIFIER>
-		 {		   processVariableDecl(token, variableIndex++, variableList);
-		   variableList.get(variableIndex-1).setTypeSpec(type);
-		   jjtThis.setTypeSpec(type);
-		   jjtThis.setAttribute(ID, token);
+	{
+		<IDENTIFIER>
+		 {
+		   processVariableDecl(token, variableIndex++, variableList);
+		   for (SymTabEntry variableId : variableList) {
+              variableId.setTypeSpec(type);
+            }
+         jjtThis.setTypeSpec(Predefined.integerType);
+         jjtThis.setAttribute(ID, token);
+         programId.setAttribute(ROUTINE_LOCALS_COUNT, variableIndex);
 		 }
 	}
 
@@ -332,7 +345,8 @@ TOKEN: /*HtScrape Tokens */
 	  {
           SymTabEntry typeId = symTabStack.lookup(token.image);
           typeId.appendLineNumber(token.beginLine);
-          TypeSpec type = typeId.getTypeSpec(); 	  }
+          TypeSpec type = typeId.getTypeSpec(); 
+	  }
 	  newVariable(type)
 	  < EQUALS >
       integerConstant()
@@ -371,6 +385,23 @@ TOKEN: /*HtScrape Tokens */
 	  { System.out.println("Successfully parsed a Simple Assignment!\n"); }
 	}
 
+	void ComplexAssignment() :{}
+	{
+	  variable()
+	  < EQUALS >
+	  //(
+	   // variable()
+	 // |
+	  //integerConstant()
+      //|
+      //stringConstant()
+    //| 
+	  Expression()
+	//)
+	  < SEMICOLON >
+	  { System.out.println("Successfully parsed a Complex Assignment!\n"); }
+	}
+	
 	void StringDeclaration() : {}
 	{
 	  < STRING >
@@ -389,12 +420,7 @@ TOKEN: /*HtScrape Tokens */
 	void FileDeclaration() : {}
 	{
 	  < FILE >
-	  {
-        SymTabEntry typeId = symTabStack.lookup(token.image);
-        typeId.appendLineNumber(token.beginLine);
-        TypeSpec type = typeId.getTypeSpec(); 
-	  }	  
-	   newVariable(type)
+	  < IDENTIFIER >
 	  < EQUALS >
 	  LoadStatement()
 	  { System.out.println("Successfully parsed a File Declaration!\n"); }
@@ -524,9 +550,9 @@ TOKEN: /*HtScrape Tokens */
 	
 	void Expression() : {} 
 	{
-  		{System.out.println("EXPRESSION STARTS");}
+  		{System.out.println("\nEXPRESSION STARTS");}
   		Operator()
-  		{System.out.println("EXPRESSION ENDS");}
+  		{System.out.println("EXPRESSION ENDS\n");}
 	}
 
 	void Operator() : {} 
@@ -545,13 +571,14 @@ TOKEN: /*HtScrape Tokens */
  		    System.out.println("Operand: " + t.image);
  		  }
 	}
-	
+
 	void expr_operator() :{Token t;	}
 	{
 	  {System.out.println("Operator:");}
 	  (< GREATER_THAN >|< LESS_THAN >|< LESS_EQUAL >|< GREATER_EQUAL >|< DOUBLE_EQUAL >|< NOT_EQUAL >)
 	  {
-	    jjtThis.setAttribute(ID, token);	  }
+	    jjtThis.setAttribute(ID, token);
+	  }
 	}
 
 	void integerConstant() : {}

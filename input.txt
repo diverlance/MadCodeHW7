@@ -1,25 +1,6 @@
-int i =3;
+	int i =3;
+	string filename = "newpage.html";
+	int j=4;
+	int maxCol = 4;
 
-string filename = "newpage.html";
 
-int j=4;
-
-i=7;
-j=2;
-
-file webpage = load(filename);
-
-table t = getTable(webpage); 
-table_data td = getData(1, 2, t); 
-
-color c = getColor(1,2,t); 
-
-print(t); 
-print(td); 
-
-close(webpage);
-
-if(i<0)
-{
-	i = 0;
-}
