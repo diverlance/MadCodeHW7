@@ -138,6 +138,26 @@ public class HtScrapeVisitorAdapter implements HtScrapeVisitor{
 		return node.childrenAccept(this, data);
 	}
 
+	@Override
+	public Object visit(ASTNumberDeclaration node, Object data) {
+		return node.childrenAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTlookahead node, Object data) {
+		return node.childrenAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTnumberConstant node, Object data) {
+		return node.childrenAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTSetDataStatement node, Object data) {
+		return node.childrenAccept(this, data);
+	}
+
 	
 
     

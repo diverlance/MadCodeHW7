@@ -1,7 +1,7 @@
-	int i =3;
+	int i = 3;
 	if(i<0)
 	{
-		i = 0;
+		i == 0;
 	}
 	string filename = "newpage.html";
 	file webpage = load(filename); //load a html file
@@ -13,14 +13,15 @@
 	close(webpage); 
 	
 	
-		string filename = "newpage.html";
-	int j=4;
-	int maxCol = 4;
+	string filename = "newpage.html";
+	int j == 4;
+	int maxCol == 4;
 	i=7;
 	j=2;
 	file webpage = load(filename);
 	table t = getTable(webpage); 
 	table_data td = getData(1, 2, t); 
+     setData(1, 2, t, "I'm changing!");
 	color c = getColor(1,2,t); 
    print(t); 
 	print(td); 

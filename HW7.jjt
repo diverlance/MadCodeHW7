@@ -203,6 +203,8 @@ TOKEN: /*HtScrape Tokens */
  	< GET_DATA: "getData" >
 	{ debugStream.println("GET_DATA token: " + matchedToken.image); }
  	|
+ 	< SET_DATA: "setData" >
+ 	{ debugStream.println("SET_DATA token: " + matchedToken.image); }	|   
  	< GET_COLOR: "getColor" >
 	{ debugStream.println("GET_COLOR token: " + matchedToken.image); }
  	|  
@@ -300,6 +302,7 @@ TOKEN: /*HtScrape Tokens */
 	    LoadStatement() |
 	    TableDeclaration() |
 	    GetTableStatement() |
+	    SetDataStatement()|
 	    TableDataDeclaration() |
 	    GetTableDataStatement() |
 	    ColorDeclaration() |
