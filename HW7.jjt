@@ -419,21 +419,27 @@ TOKEN: /*HtScrape Tokens */
 
 	void FileDeclaration() : {}
 	{
+	  try {
 	  < FILE >
 	  < IDENTIFIER >
 	  < EQUALS >
 	  LoadStatement()
 	  { System.out.println("Successfully parsed a File Declaration!\n"); }
+	  }
+	  catch(ParseException ex){handleError(ex);}
 	}
 
 	void LoadStatement() : {}
 	{
+	  try {
 	  < LOAD >
 	  < LEFT_PAREN >
 	  variable()
 	  < RIGHT_PAREN >
 	  < SEMICOLON >
 	  { System.out.println("Successfully parsed a Load Statement!\n"); }
+	  }
+	  catch(ParseException ex){handleError(ex);}
 	}
 
 	void TableDeclaration(): {}
@@ -541,11 +547,14 @@ TOKEN: /*HtScrape Tokens */
 	
     void IfStatement() : {}
     {
+    	try {
   		<IF><LEFT_PAREN>Expression()<RIGHT_PAREN>
   		<LEFT_CURLY >
   			Statement()
   		<RIGHT_CURLY >
     	{ System.out.println("Successfully parsed an if statement!\n"); }
+    	}
+    	catch(ParseException ex){handleError(ex);}
 	}
 	
 	void Expression() : {} 
@@ -611,7 +620,7 @@ public String errorHandler(ParseException exception)
     Token token = exception.currentToken;
     System.out.println(ex.getMessage());
     do {token = getNextToken();} 
-    while (token.kind != SEMICOLON);
+    while (token.kind != EOF);
     jjtThis.popNode();
     return token.image;
 }*/
