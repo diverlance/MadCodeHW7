@@ -332,12 +332,9 @@ TOKEN: /*HtScrape Tokens */
 	{
 		<IDENTIFIER>
 		 {
-		   processVariableDecl(token, variableIndex++, variableList);
-		   for (SymTabEntry variableId : variableList) {
-              variableId.setTypeSpec(type);
-            }
-         jjtThis.setTypeSpec(Predefined.integerType);
-         jjtThis.setAttribute(ID, token);
+		 SymTabEntry variableId = processVariableDecl(token, variableIndex++, variableList, type);
+         jjtThis.setTypeSpec(type);
+         jjtThis.setAttribute(ID, variableId);
          programId.setAttribute(ROUTINE_LOCALS_COUNT, variableIndex);
 		 }
 	}
@@ -381,6 +378,8 @@ TOKEN: /*HtScrape Tokens */
 	  variable()
 	  < EQUALS >
 	  (integerConstant()
+	  |
+	  numberConstant()
       |
       stringConstant()
       )
@@ -392,15 +391,7 @@ TOKEN: /*HtScrape Tokens */
 	{
 	  variable()
 	  < EQUALS >
-	  //(
-	   // variable()
-	 // |
-	  //integerConstant()
-      //|
-      //stringConstant()
-    //| 
-	  Expression()
-	//)
+	  Operation()
 	  < SEMICOLON >
 	  { System.out.println("Successfully parsed a Complex Assignment!\n"); }
 	}
@@ -604,8 +595,8 @@ TOKEN: /*HtScrape Tokens */
 	void numberConstant() : {}
 	{
     <NUMBER> {
-        jjtThis.setTypeSpec(Predefined.integerType);
-        jjtThis.setAttribute(VALUE, Integer.parseInt(token.image));
+        jjtThis.setTypeSpec(Predefined.realType);
+        jjtThis.setAttribute(VALUE, Float.parseFloat(token.image));
     	}
 	}
 
@@ -616,6 +607,8 @@ TOKEN: /*HtScrape Tokens */
         jjtThis.setAttribute(VALUE, String.valueOf(token.image));
     	}
 	}
+
+	
 //Handles errors when parsing
 /*JAVACODE 
 public String errorHandler(ParseException exception) 
@@ -628,14 +621,16 @@ public String errorHandler(ParseException exception)
     return token.image;
 }*/
 JAVACODE
-void processVariableDecl(Token token, int index,
-                         ArrayList<SymTabEntry> variableList) #void
+SymTabEntry processVariableDecl(Token token, int index,
+                         ArrayList<SymTabEntry> variableList, TypeSpec type) #void
 {
     SymTabEntry variableId = symTabStack.enterLocal(token.image);
     variableId.setIndex(index);
     variableId.setDefinition(DefinitionImpl.VARIABLE);
     variableId.appendLineNumber(token.beginLine);
+    variableId.setTypeSpec(type);
     variableList.add(variableId);
+    return variableId;
 }
 
 JAVACODE
