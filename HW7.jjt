@@ -8,7 +8,7 @@ options
     NODE_EXTENDS="wci.intermediate.icodeimpl.ICodeNodeImpl";
     MULTI=true;
     VISITOR=true;
-    //DEBUG_PARSER=true;
+    DEBUG_PARSER=true;
 }
 
 PARSER_BEGIN(HtScrape)
@@ -48,7 +48,7 @@ public class HtScrape
 
         // Process the source file path which ends in .pcl
         // and create the output file path which ends in .j
-        String sourceFilePath = "input.txt";
+        String sourceFilePath = "in.txt";
         int truncatedLength = sourceFilePath.length() - SOURCE_SUFFIX.length();
         int suffixIndex = sourceFilePath.lastIndexOf(SOURCE_SUFFIX);
         String objectFilePath = (suffixIndex == truncatedLength)
@@ -133,7 +133,10 @@ TOKEN: /*HtScrape Tokens */
     |
     < THEN: "then" >
     { debugStream.println("THEN token: " + matchedToken.image); }
-    | 
+    |
+    < WHILE: "while" >
+    { debugStream.println("WHILE token: " + matchedToken.image); }
+  	| 
     <EXIT: "exit" >
     { debugStream.println("EXIT token: " + matchedToken.image); }
     |
@@ -173,39 +176,18 @@ TOKEN: /*HtScrape Tokens */
     < NULL: "null" >
     { debugStream.println("NULL token: " + matchedToken.image); }
     |
-    < TABLE: "table" >
-    { debugStream.println("TABLE token: " + matchedToken.image); }
-    |
-    < TABLE_DATA: "table_data" >
-    { debugStream.println("TABLE_DATA token: " + matchedToken.image); }
-    |
-    < COLOR: "color" >
-    { debugStream.println("COLOR token: " + matchedToken.image); }
-  	| 
     < GET: "get" >
     { debugStream.println("GET token: " + matchedToken.image); }
     |
     < PRINT: "print" >
     { debugStream.println("PRINT token: " + matchedToken.image); }
     |
-    < CLOSE: "close" >
-	{ debugStream.println("CLOSE token: " + matchedToken.image); }
- 	|
- 	< FILE: "file" >
-    { debugStream.println("FILE token: " + matchedToken.image); }
-    |
-    < LOAD: "load" >
-	{ debugStream.println("LOAD token: " + matchedToken.image); }
- 	|
- 	< GET_TABLE: "getTable" >
-	{ debugStream.println("GET_TABLE token: " + matchedToken.image); }
- 	|
- 	< GET_DATA: "getData" >
-	{ debugStream.println("GET_DATA token: " + matchedToken.image); }
- 	|
- 	< GET_COLOR: "getColor" >
-	{ debugStream.println("GET_COLOR token: " + matchedToken.image); }
- 	|  
+ 	< PRINT_FULL_TABLE: "printFullTable" >
+ 	{ debugStream.println("PRINT_FULL_TABLE token: " + matchedToken.image); }
+	|
+ 	< PRINT_DATA: "printData" >
+ 	{ debugStream.println("PRINT_DATA token: " + matchedToken.image); }
+	|  
     <IDENTIFIER: (["a"-"z", "A"-"Z"])(["a"-"z", "A"-"Z", "0"-"9","_", "-"])* >  
    	{ debugStream.println("IDENTIFIER token: " + matchedToken.image); }
     |
@@ -227,6 +209,12 @@ TOKEN: /*HtScrape Tokens */
 	|
 	< MINUS: "-" >
  	{ debugStream.println("MINUS token: " + matchedToken.image); }
+	|
+	< MULTIPLY: "*" >
+ 	{ debugStream.println("MULTIPLY token: " + matchedToken.image); }
+	|
+	< DIVIDE: "/" >
+ 	{ debugStream.println("DIVIDE token: " + matchedToken.image); }
 	|
  	< EQUALS: "=" >
  	{ debugStream.println("EQUALS token: " + matchedToken.image); }
@@ -262,6 +250,11 @@ TOKEN: /*HtScrape Tokens */
 | <GREATER_EQUAL : ">=">{ debugStream.println("GREATER_EQUAL token: " + matchedToken.image); }
 | <DOUBLE_EQUAL : "=="> { debugStream.println("DOUBLE_EQUAL token: " + matchedToken.image); }
 | <NOT_EQUAL : "!="> { debugStream.println("NOT_EQUAL token: " + matchedToken.image); }
+| <PLUS_PLUS : "++" > { debugStream.println("PLUS_PLUS token: " + matchedToken.image); }
+| <PLUS_EQUAL : "+=" > { debugStream.println("PLUS_EQUAL token: " + matchedToken.image); }
+| <MINUS_EQUAL : "-=" > { debugStream.println("MINUS_EQUAL token: " + matchedToken.image); }
+| <MULTIPLY_EQUAL : "*=" > { debugStream.println("MULTIPLY_EQUAL token: " + matchedToken.image); }
+| <DIVIDE_EQUAL : "/=" > { debugStream.println("DIVIDE_EQUAL token: " + matchedToken.image); }
 }
 
 	//production rules
@@ -294,19 +287,12 @@ TOKEN: /*HtScrape Tokens */
 	    IntDeclaration() |
 	    NumberDeclaration() |
 	    StringDeclaration() |
-	    SimpleAssignment() |
-	    ComplexAssignment() |
-	    FileDeclaration() |
-	    LoadStatement() |
-	    TableDeclaration() |
-	    GetTableStatement() |
-	    TableDataDeclaration() |
-	    GetTableDataStatement() |
-	    ColorDeclaration() |
-	    GetColorStatement() |
+	    lookahead()|
 	    PrintStatement() |
-	    CloseStatement() |
-	    IfStatement()
+	    PrintFullTableStatement()|
+	    PrintDataStatement()|
+	    IfStatement()|
+	    WhileStatement()
 	  )*
 	  {
 	    return jjtThis;
@@ -329,19 +315,16 @@ TOKEN: /*HtScrape Tokens */
 	{
 		<IDENTIFIER>
 		 {
-		   processVariableDecl(token, variableIndex++, variableList);
-		   for (SymTabEntry variableId : variableList) {
-              variableId.setTypeSpec(type);
-            }
-         jjtThis.setTypeSpec(Predefined.integerType);
-         jjtThis.setAttribute(ID, token);
+		   SymTabEntry variableId = processVariableDecl(token, variableIndex++, variableList, type);
+         jjtThis.setTypeSpec(type);
+         jjtThis.setAttribute(ID, variableId);
          programId.setAttribute(ROUTINE_LOCALS_COUNT, variableIndex);
 		 }
 	}
 
 	void IntDeclaration(): {}
 	{
-          try{
+        try {
 	  < INT >
 	  {
           SymTabEntry typeId = symTabStack.lookup(token.image);
@@ -352,16 +335,16 @@ TOKEN: /*HtScrape Tokens */
 	  < EQUALS >
       integerConstant()
 	  < SEMICOLON >
+          }
+          catch(ParseException ex){handleError(ex);}
 	  {
 	    System.out.println("Successfully parsed an Int Declaration!\n");
 	  }
-          }
-          catch(ParseException){handleError(ex);}
 	}
 
 	void NumberDeclaration(): {}
 	{
-          try{
+        try {
 	  < NUMBER >
 	  {
           SymTabEntry typeId = symTabStack.lookup(token.image);
@@ -372,48 +355,64 @@ TOKEN: /*HtScrape Tokens */
 	  < EQUALS >
       numberConstant()
 	  < SEMICOLON >
+          }
+          catch(ParseException ex){handleError(ex);}
 	  {
 	    System.out.println("Successfully parsed a Number Declaration!\n");
 	  }
-          }
-          catch(ParseException){handleError(ex);}
 	}
-	
+
+	void ArithmeticStatement() : {}
+	{
+	  variable()
+	  (< PLUS_EQUAL >|< MINUS_EQUAL >|< MULTIPLY_EQUAL >|< DIVIDE_EQUAL >)
+	  Operator()
+	  < SEMICOLON >
+	  {
+	    System.out.println("Successfully parsed an Arithmetic Statement!\n");
+	  }
+	}
+	void lookahead() : {}
+	{
+	  (LOOKAHEAD(ArithmeticStatement())
+	 	ArithmeticStatement()
+		|
+	 	lookahead2()
+	 	) 	
+	}
+	void lookahead2() : {}
+	{
+	  (LOOKAHEAD(SimpleAssignment())
+	  SimpleAssignment()
+		|
+	  ComplexAssignment()
+	)
+	}
 	void SimpleAssignment() : {}
 	{
-          try{
 	  variable()
 	  < EQUALS >
-	  (integerConstant()
-      |
-      stringConstant()
-      )
+	  (
+	    integerConstant()
+	  |
+	  	stringConstant()
+	  )
 	  < SEMICOLON >
 	  { System.out.println("Successfully parsed a Simple Assignment!\n"); }
-          }
-          catch(ParseException){handleError(ex);}
 	}
 
 	void ComplexAssignment() :{}
 	{
 	  variable()
 	  < EQUALS >
-	  //(
-	   // variable()
-	 // |
-	  //integerConstant()
-      //|
-      //stringConstant()
-    //| 
 	  Expression()
-	//)
 	  < SEMICOLON >
 	  { System.out.println("Successfully parsed a Complex Assignment!\n"); }
 	}
 	
 	void StringDeclaration() : {}
 	{
-          try{
+        try {
 	  < STRING >
 	  {
         SymTabEntry typeId = symTabStack.lookup(token.image);
@@ -424,125 +423,12 @@ TOKEN: /*HtScrape Tokens */
 	  < EQUALS >
 	  stringConstant()
 	  < SEMICOLON >
+          }
+          catch(ParseException ex){handleError(ex);}
 	  { System.out.println("Successfully parsed a String Declaration!\n"); }
-          }
-          catch(ParseException){handleError(ex);}
 	}
 
-	void FileDeclaration() : {}
-	{
-          try
-          {
-	  < FILE >
-	  < IDENTIFIER >
-	  < EQUALS >
-	  LoadStatement()
-	  { System.out.println("Successfully parsed a File Declaration!\n"); }
-	}
-        catch(ParseException){handleError(ex);}
-
-	void LoadStatement() : {}
-	{
-          try{
-	  < LOAD >
-	  < LEFT_PAREN >
-	  variable()
-	  < RIGHT_PAREN >
-	  < SEMICOLON >
-	  { System.out.println("Successfully parsed a Load Statement!\n"); }
-          }
-          catch(ParseException){handleError(ex);}
-	}
-
-	void TableDeclaration(): {}
-	{
-          try{
-	  < TABLE >
-	  {
-        SymTabEntry typeId = symTabStack.lookup(token.image);
-        typeId.appendLineNumber(token.beginLine);
-        TypeSpec type = typeId.getTypeSpec(); 
-	  }	  
-	   newVariable(type)
-	  < EQUALS >
-	  GetTableStatement()
-	  { System.out.println("Successfully parsed a Table Declaration!\n"); }
-          }
-          catch(ParseException){handleDeclarationError(ex);}
-	}
-
-	void GetTableStatement(): {}
-	{
-          try{
-	  < GET_TABLE >
-	  < LEFT_PAREN >
-	  variable()
-	  < RIGHT_PAREN >
-	  < SEMICOLON >
-	  { System.out.println("Successfully parsed a GetTable Statement!\n"); }
-          }
-          catch(ParseException){handleError(ex);}
-	}
-
-	void TableDataDeclaration(): {}
-	{
-          try{
-	  < TABLE_DATA >
-	  {
-        SymTabEntry typeId = symTabStack.lookup(token.image);
-        typeId.appendLineNumber(token.beginLine);
-        TypeSpec type = typeId.getTypeSpec(); 
-	  }	  
-	   newVariable(type)
-	  < EQUALS >
-	  GetTableDataStatement()
-	  { System.out.println("Successfully parsed a TableData Declaration!\n"); }
-          }
-          catch(ParseException){handleDeclarationError(ex);}
-	}
-
-	void GetTableDataStatement(): {}
-	{
-          try{
-	  < GET_DATA >
-	  < LEFT_PAREN >
-	  MultipleParams()
-	  < RIGHT_PAREN >
-	  < SEMICOLON >
-	  { System.out.println("Successfully parsed a GetTableData Statement!\n"); }
-          }
-          catch(ParseException){handleError(ex);}
-	}
-
-	void ColorDeclaration(): {}
-	{
-          try{
-	  < COLOR >
-	  {
-        SymTabEntry typeId = symTabStack.lookup(token.image);
-        typeId.appendLineNumber(token.beginLine);
-        TypeSpec type = typeId.getTypeSpec(); 
-	  }	  
-	   newVariable(type)
-	  < EQUALS >
-	  GetColorStatement()
-	  { System.out.println("Successfully parsed a Color Declaration!\n"); }
-          }
-          catch(ParseException){handleError(ex);}
-	}
-
-	void GetColorStatement(): {}
-	{
-          try {
-	  < GET_COLOR >
-	  < LEFT_PAREN >
-	  MultipleParams()
-	  < RIGHT_PAREN >
-	  < SEMICOLON >
-	  { System.out.println("Successfully parsed a GetColor Statement!\n"); }
-          }
-          catch(ParseException){handleError(ex);}
-	}
+	
 	
 	void MultipleParams() : {}
 	{
@@ -557,41 +443,82 @@ TOKEN: /*HtScrape Tokens */
 
 	void PrintStatement() : {}
 	{
-          try{
+        try {
 	  < PRINT >
 	  < LEFT_PAREN >
-	  variable()
+	  stringConstant()
 	  < RIGHT_PAREN >
 	  < SEMICOLON >
+          } 
+          catch(ParseException ex){handleError(ex);}
 	  { System.out.println("Successfully parsed a Print Statement!\n"); }
-          }
-          catch(ParseException){handleError(ex);}
 	}
 
-	void CloseStatement() : {}
+	void PrintFullTableStatement() : {}
 	{
-          try{
-	  < CLOSE >
+        try {
+	  < PRINT_FULL_TABLE >
 	  < LEFT_PAREN >
-	  variable()
+	 	MultipleParams()
 	  < RIGHT_PAREN >
 	  < SEMICOLON >
-	  { System.out.println("Successfully parsed a Close Statement!\n"); }
           }
-          catch(ParseException ex){handleCloseError(ex);}
+          catch(ParseException ex){handleError(ex);}
+	  { System.out.println("Successfully parsed a PrintFullStatement Statement!\n"); }
 	}
-	
+
+	void PrintDataStatement() : {}
+	{
+        try {
+	  < PRINT_DATA >
+	  < LEFT_PAREN >
+	  MultipleParams()
+	  < RIGHT_PAREN >
+	  < SEMICOLON >
+          }
+          catch(ParseException ex){handleError(ex);}
+	  { System.out.println("Successfully parsed a PrintData Statement!\n"); }
+	}
+
     void IfStatement() : {}
     {
-        try{
+        try {
   		<IF><LEFT_PAREN>Expression()<RIGHT_PAREN>
   		<LEFT_CURLY >
   			Statement()
   		<RIGHT_CURLY >
+  		[ ElseStatement()]
+            }
+            catch(ParseException ex){handleLoopError(ex);}
     	{ System.out.println("Successfully parsed an if statement!\n"); }
 	}
-        catch(ParseException ex){handleIfError(ex);}
-	
+	void ElseStatement() : {}
+	{
+                try {
+		< ELSE >
+  		< LEFT_CURLY >
+  			Statement()
+  		< RIGHT_CURLY >
+                }
+                catch(ParseException ex){handleLoopError(ex);}
+  		{
+	    	System.out.println("Successfully parsed an ELSE Statement!\n");
+	  	}
+	}
+	void WhileStatement() : {}
+	{
+        try {
+	  < WHILE >
+	  < LEFT_PAREN >
+	  Expression()
+	  < RIGHT_PAREN >
+	  <LEFT_CURLY >
+  	   	Statement()
+  		<RIGHT_CURLY >
+        }
+        catch(ParseException ex){handleLoopError(ex);}
+    	{ System.out.println("Successfully parsed an if statement!\n"); }
+	}
 	void Expression() : {} 
 	{
   		{System.out.println("\nEXPRESSION STARTS");}
@@ -602,8 +529,19 @@ TOKEN: /*HtScrape Tokens */
 	void Operator() : {} 
 	{
   		Operand()
-  		expr_operator()
-  		Operand()
+  		[
+  		(
+  		  (
+  		    expr_operator()
+  			Operand()
+  			)
+  		|
+  		  (
+  		    arith_operator()
+  		    Operand()
+  		  )+
+  		)
+  		]
 	}
 	
 	void Operand() : {Token t;} 
@@ -625,6 +563,15 @@ TOKEN: /*HtScrape Tokens */
 	  }
 	}
 
+	void arith_operator() :{Token t;}
+	{
+	  {System.out.println("Operator:");}
+	  (< PLUS >|< MINUS >|< MULTIPLY >|< DIVIDE >)
+	  {
+	    jjtThis.setAttribute(ID, token);
+	  }
+	}
+	
 	void integerConstant() : {}
 	{
     <INTEGER> {
@@ -636,8 +583,8 @@ TOKEN: /*HtScrape Tokens */
 	void numberConstant() : {}
 	{
     <NUMBER> {
-        jjtThis.setTypeSpec(Predefined.integerType);
-        jjtThis.setAttribute(VALUE, Integer.parseInt(token.image));
+        jjtThis.setTypeSpec(Predefined.realType);
+        jjtThis.setAttribute(VALUE, Float.parseFloat(token.image));
     	}
 	}
 
@@ -648,26 +595,18 @@ TOKEN: /*HtScrape Tokens */
         jjtThis.setAttribute(VALUE, String.valueOf(token.image));
     	}
 	}
-//Handles errors when parsing
-/*JAVACODE 
-public String errorHandler(ParseException exception) 
-{
-    Token token = exception.currentToken;
-    System.out.println(ex.getMessage());
-    do {token = getNextToken();} 
-    while (token.kind != SEMICOLON);
-    jjtThis.popNode();
-    return token.image;
-}*/
+	
 JAVACODE
-void processVariableDecl(Token token, int index,
-                         ArrayList<SymTabEntry> variableList) #void
+SymTabEntry processVariableDecl(Token token, int index,
+             ArrayList<SymTabEntry> variableList, TypeSpec type) #void
 {
     SymTabEntry variableId = symTabStack.enterLocal(token.image);
     variableId.setIndex(index);
     variableId.setDefinition(DefinitionImpl.VARIABLE);
     variableId.appendLineNumber(token.beginLine);
+    variableId.setTypeSpec(type);
     variableList.add(variableId);
+    return variableId;
 }
 
 JAVACODE
@@ -684,58 +623,15 @@ String handleError(ParseException ex) #void
     return token.image;
 }
 
-String handleIfError(ParseException ex) #void {
-    trace_call("handleError");
-    try {
+JAVACODE String handleLoopError(ParseException ex) #void
+{
     Token token = ex.currentToken;
     System.out.println(ex.getMessage());
-        do
-        {
-                token = getNextToken();
-   }while (token.kind != RIGHT_CURLY);
 
-        jjtree.popNode();
+    do {
+    	token = getNextToken();
+    } while (token.kind != RIGHT_CURLY);
 
+	jjtree.popNode();
     return token.image;
-    } finally {
-      trace_return("handleError");
-    }
-  }
-
-JAVACODE 
-String handleDeclarationError(ParseException ex) #void {
-    trace_call("handleError");
-    try {
-    Token token = ex.currentToken;
-    System.out.println(ex.getMessage());
-        do
-        {
-                token = getNextToken();
-   }while (token.kind != EQUALS);
-
-        jjtree.popNode();
-
-    return token.image;
-    } finally {
-      trace_return("handleError");
-    }
-  }
-
-JAVACODE
-String handleCloseError(ParseException ex) #void {
-    trace_call("handleError");
-    try {
-    Token token = ex.currentToken;
-    System.out.println(ex.getMessage());
-        do
-        {
-                token = getNextToken();
-   }while (token.kind != EOF);
-
-        jjtree.popNode();
-
-    return token.image;
-    } finally {
-      trace_return("handleError");
-    }
-  }
+}
