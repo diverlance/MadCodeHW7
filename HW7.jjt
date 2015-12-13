@@ -8,7 +8,7 @@ options
     NODE_EXTENDS="wci.intermediate.icodeimpl.ICodeNodeImpl";
     MULTI=true;
     VISITOR=true;
-    //DEBUG_PARSER=true;
+    DEBUG_PARSER=true;
 }
 
 PARSER_BEGIN(HtScrape)
@@ -210,6 +210,12 @@ TOKEN: /*HtScrape Tokens */
 	< MINUS: "-" >
  	{ debugStream.println("MINUS token: " + matchedToken.image); }
 	|
+	< MULTIPLY: "*" >
+ 	{ debugStream.println("MULTIPLY token: " + matchedToken.image); }
+	|
+	< DIVIDE: "/" >
+ 	{ debugStream.println("DIVIDE token: " + matchedToken.image); }
+	|
  	< EQUALS: "=" >
  	{ debugStream.println("EQUALS token: " + matchedToken.image); }
 	|
@@ -245,7 +251,9 @@ TOKEN: /*HtScrape Tokens */
 | <DOUBLE_EQUAL : "=="> { debugStream.println("DOUBLE_EQUAL token: " + matchedToken.image); }
 | <NOT_EQUAL : "!="> { debugStream.println("NOT_EQUAL token: " + matchedToken.image); }
 | <PLUS_PLUS : "++" > { debugStream.println("PLUS_PLUS token: " + matchedToken.image); }
-| <INCREASE : "+=" > { debugStream.println("PLUS_PLUS token: " + matchedToken.image); }
+| <PLUS_EQUAL : "+=" > { debugStream.println("PLUS_EQUAL token: " + matchedToken.image); }
+| <MINUS_EQUAL : "-=" > { debugStream.println("MINUS_EQUAL token: " + matchedToken.image); }
+| <MULTIPLY_EQUAL : "*=" > { debugStream.println("MULTIPLY_EQUAL token: " + matchedToken.image); }| <DIVIDE_EQUAL : "/=" > { debugStream.println("DIVIDE_EQUAL token: " + matchedToken.image); }
 }
 
 	//production rules
@@ -349,22 +357,22 @@ TOKEN: /*HtScrape Tokens */
 
 	void ArithmeticStatement() : {}	{
 	  variable()
-	  < INCREASE >
-	  Operand()
+	  (< PLUS_EQUAL >|< MINUS_EQUAL >|< MULTIPLY_EQUAL >|< DIVIDE_EQUAL >)
+	  Operator()
 	  < SEMICOLON >
 	  {
 	    System.out.println("Successfully parsed an Arithmetic Statement!\n");
 	  }	}
 	void lookahead() : {}
 	{
-	  (LOOKAHEAD(variable()<INCREASE>)
+	  (LOOKAHEAD(ArithmeticStatement())
 	 	ArithmeticStatement()
 		|
 	 	lookahead2()
 	 	) 		}
 	void lookahead2() : {}
 	{
-	  (LOOKAHEAD(2)
+	  (LOOKAHEAD(SimpleAssignment())
 	  SimpleAssignment()
 		|
 	  ComplexAssignment()
@@ -455,7 +463,17 @@ TOKEN: /*HtScrape Tokens */
   		<LEFT_CURLY >
   			Statement()
   		<RIGHT_CURLY >
+  		[ ElseStatement()]
     	{ System.out.println("Successfully parsed an if statement!\n"); }
+	}
+	void ElseStatement() : {}
+	{		< ELSE >
+  		< LEFT_CURLY >
+  			Statement()
+  		< RIGHT_CURLY >
+  		{
+	    	System.out.println("Successfully parsed an ELSE Statement!\n");
+	  	}
 	}
 	void WhileStatement() : {}	{
 	  < WHILE >
@@ -476,8 +494,17 @@ TOKEN: /*HtScrape Tokens */
 	void Operator() : {} 
 	{
   		Operand()
-  		expr_operator()
-  		Operand()
+  		[
+  		(  		  (
+  		    expr_operator()
+  			Operand()
+  			)
+  		|
+  		  (  		    arith_operator()
+  		    Operand()
+  		  )+
+  		)
+  		]
 	}
 	
 	void Operand() : {Token t;} 
@@ -498,14 +525,16 @@ TOKEN: /*HtScrape Tokens */
 	    jjtThis.setAttribute(ID, token);
 	  }
 	}
-	void arith_operator(): {Token t;}
+
+	void arith_operator() :{Token t;}
 	{
 	  {System.out.println("Operator:");}
-	  < INCREASE >
-	  Operand()
-	  {	    jjtThis.setAttribute(ID, token);
-	  }	}
-
+	  (< PLUS >|< MINUS >|< MULTIPLY >|< DIVIDE >)
+	  {
+	    jjtThis.setAttribute(ID, token);
+	  }
+	}
+	
 	void integerConstant() : {}
 	{
     <INTEGER> {

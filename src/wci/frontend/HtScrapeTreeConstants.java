@@ -20,16 +20,17 @@ public interface HtScrapeTreeConstants
   public int JJTPRINTFULLTABLESTATEMENT = 14;
   public int JJTPRINTDATASTATEMENT = 15;
   public int JJTIFSTATEMENT = 16;
-  public int JJTWHILESTATEMENT = 17;
-  public int JJTEXPRESSION = 18;
-  public int JJTOPERATOR = 19;
-  public int JJTOPERAND = 20;
-  public int JJTEXPR_OPERATOR = 21;
-  public int JJTARITH_OPERATOR = 22;
-  public int JJTINTEGERCONSTANT = 23;
-  public int JJTNUMBERCONSTANT = 24;
-  public int JJTSTRINGCONSTANT = 25;
-  public int JJTVOID = 26;
+  public int JJTELSESTATEMENT = 17;
+  public int JJTWHILESTATEMENT = 18;
+  public int JJTEXPRESSION = 19;
+  public int JJTOPERATOR = 20;
+  public int JJTOPERAND = 21;
+  public int JJTEXPR_OPERATOR = 22;
+  public int JJTARITH_OPERATOR = 23;
+  public int JJTINTEGERCONSTANT = 24;
+  public int JJTNUMBERCONSTANT = 25;
+  public int JJTSTRINGCONSTANT = 26;
+  public int JJTVOID = 27;
 
 
   public String[] jjtNodeName = {
@@ -50,6 +51,7 @@ public interface HtScrapeTreeConstants
     "PrintFullTableStatement",
     "PrintDataStatement",
     "IfStatement",
+    "ElseStatement",
     "WhileStatement",
     "Expression",
     "Operator",
@@ -62,4 +64,4 @@ public interface HtScrapeTreeConstants
     "void",
   };
 }
-/* JavaCC - OriginalChecksum=daf873d6519d385c2124396254b1f587 (do not edit this line) */
+/* JavaCC - OriginalChecksum=ed4cc7aa1e0eb5eaaa098d2ed8770595 (do not edit this line) */

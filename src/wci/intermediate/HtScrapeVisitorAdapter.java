@@ -128,13 +128,19 @@ public class HtScrapeVisitorAdapter implements HtScrapeVisitor{
 		return node.childrenAccept(this, data);
 	}
 
+
 	@Override
-	public Object visit(ASTarith_operator node, Object data) {
+	public Object visit(ASTlookahead2 node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 
 	@Override
-	public Object visit(ASTlookahead2 node, Object data) {
+	public Object visit(ASTElseStatement node, Object data) {
+		return node.childrenAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTarith_operator node, Object data) {
 		return node.childrenAccept(this, data);
 	}
 

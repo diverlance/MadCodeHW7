@@ -60,6 +60,9 @@ public class HtScrapeDefaultVisitor implements HtScrapeVisitor{
   public Object visit(ASTIfStatement node, Object data){
     return defaultVisit(node, data);
   }
+  public Object visit(ASTElseStatement node, Object data){
+    return defaultVisit(node, data);
+  }
   public Object visit(ASTWhileStatement node, Object data){
     return defaultVisit(node, data);
   }
@@ -88,4 +91,4 @@ public class HtScrapeDefaultVisitor implements HtScrapeVisitor{
     return defaultVisit(node, data);
   }
 }
-/* JavaCC - OriginalChecksum=5637dd00ad01bd3f70dfac9930d50c2a (do not edit this line) */
+/* JavaCC - OriginalChecksum=e00dd7585b5fea0f229c2f745395b7d4 (do not edit this line) */

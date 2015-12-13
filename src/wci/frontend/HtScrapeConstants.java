@@ -75,39 +75,49 @@ public interface HtScrapeConstants {
   /** RegularExpression Id. */
   int MINUS = 38;
   /** RegularExpression Id. */
-  int EQUALS = 39;
+  int MULTIPLY = 39;
   /** RegularExpression Id. */
-  int LESS_THAN = 40;
+  int DIVIDE = 40;
   /** RegularExpression Id. */
-  int GREATER_THAN = 41;
+  int EQUALS = 41;
   /** RegularExpression Id. */
-  int BANG = 42;
+  int LESS_THAN = 42;
   /** RegularExpression Id. */
-  int COMMA = 43;
+  int GREATER_THAN = 43;
   /** RegularExpression Id. */
-  int PERIOD = 44;
+  int BANG = 44;
   /** RegularExpression Id. */
-  int SEMICOLON = 45;
+  int COMMA = 45;
   /** RegularExpression Id. */
-  int AT_SIGN = 46;
+  int PERIOD = 46;
   /** RegularExpression Id. */
-  int POUND_SIGN = 47;
+  int SEMICOLON = 47;
   /** RegularExpression Id. */
-  int LETTER = 48;
+  int AT_SIGN = 48;
   /** RegularExpression Id. */
-  int DIGIT = 49;
+  int POUND_SIGN = 49;
   /** RegularExpression Id. */
-  int LESS_EQUAL = 50;
+  int LETTER = 50;
   /** RegularExpression Id. */
-  int GREATER_EQUAL = 51;
+  int DIGIT = 51;
   /** RegularExpression Id. */
-  int DOUBLE_EQUAL = 52;
+  int LESS_EQUAL = 52;
   /** RegularExpression Id. */
-  int NOT_EQUAL = 53;
+  int GREATER_EQUAL = 53;
   /** RegularExpression Id. */
-  int PLUS_PLUS = 54;
+  int DOUBLE_EQUAL = 54;
   /** RegularExpression Id. */
-  int INCREASE = 55;
+  int NOT_EQUAL = 55;
+  /** RegularExpression Id. */
+  int PLUS_PLUS = 56;
+  /** RegularExpression Id. */
+  int PLUS_EQUAL = 57;
+  /** RegularExpression Id. */
+  int MINUS_EQUAL = 58;
+  /** RegularExpression Id. */
+  int MULTIPLY_EQUAL = 59;
+  /** RegularExpression Id. */
+  int DIVIDE_EQUAL = 60;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -153,6 +163,8 @@ public interface HtScrapeConstants {
     "\"}\"",
     "\"+\"",
     "\"-\"",
+    "\"*\"",
+    "\"/\"",
     "\"=\"",
     "\"<\"",
     "\">\"",
@@ -170,6 +182,9 @@ public interface HtScrapeConstants {
     "\"!=\"",
     "\"++\"",
     "\"+=\"",
+    "\"-=\"",
+    "\"*=\"",
+    "\"/=\"",
   };
 
 }

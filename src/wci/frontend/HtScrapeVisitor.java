@@ -21,6 +21,7 @@ public interface HtScrapeVisitor
   public Object visit(ASTPrintFullTableStatement node, Object data);
   public Object visit(ASTPrintDataStatement node, Object data);
   public Object visit(ASTIfStatement node, Object data);
+  public Object visit(ASTElseStatement node, Object data);
   public Object visit(ASTWhileStatement node, Object data);
   public Object visit(ASTExpression node, Object data);
   public Object visit(ASTOperator node, Object data);
@@ -31,4 +32,4 @@ public interface HtScrapeVisitor
   public Object visit(ASTnumberConstant node, Object data);
   public Object visit(ASTstringConstant node, Object data);
 }
-/* JavaCC - OriginalChecksum=f0e1762e0b1bfb6bbe6befc3541198ea (do not edit this line) */
+/* JavaCC - OriginalChecksum=40b28cc232fe08d7c618e9832243c817 (do not edit this line) */
