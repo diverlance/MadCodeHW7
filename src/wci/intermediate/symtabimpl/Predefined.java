@@ -135,14 +135,14 @@ public class Predefined
         tableId.setDefinition(DefinitionImpl.TYPE);
         tableId.setTypeSpec(tableType);
         
-        // type File.
+        // type Table_Data.
         tableDataId = symTabStack.enterLocal("table_data");
         tableDataType = TypeFactory.createType(SCALAR);
         tableDataType.setIdentifier(tableDataId);
         tableDataId.setDefinition(DefinitionImpl.TYPE);
         tableDataId.setTypeSpec(tableDataType);
         
-        // type File.
+        // type Color.
         colorId = symTabStack.enterLocal("color");
         colorType = TypeFactory.createType(SCALAR);
         colorType.setIdentifier(colorId);

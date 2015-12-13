@@ -99,62 +99,6 @@ public class TypeSetterVisitor extends HtScrapeVisitorAdapter
         return obj;
 	}
 
-	public Object visit(ASTFileDeclaration node, Object data) 
-	{
-        Object obj = super.visit(node, data);
-        setType(node);
-        return obj;
-	}
-
-	public Object visit(ASTLoadStatement node, Object data) 
-	{
-	       Object obj = super.visit(node, data);
-	        setType(node);
-	        return obj;
-	}
-
-	public Object visit(ASTTableDeclaration node, Object data) 
-	{
-	       Object obj = super.visit(node, data);
-	        setType(node);
-	        return obj;
-	}
-
-	public Object visit(ASTGetTableStatement node, Object data) 
-	{
-	       Object obj = super.visit(node, data);
-	        setType(node);
-	        return obj;
-	}
-
-	public Object visit(ASTTableDataDeclaration node, Object data) 
-	{
-	       Object obj = super.visit(node, data);
-	        setType(node);
-	        return obj;
-	}
-
-	public Object visit(ASTGetTableDataStatement node, Object data) 
-	{
-	       Object obj = super.visit(node, data);
-	        setType(node);
-	        return obj;
-	}
-
-	public Object visit(ASTColorDeclaration node, Object data) 
-	{
-	       Object obj = super.visit(node, data);
-	        setType(node);
-	        return obj;
-	}
-
-	public Object visit(ASTGetColorStatement node, Object data) 
-	{
-	       Object obj = super.visit(node, data);
-	        setType(node);
-	        return obj;
-	}
-
 	public Object visit(ASTMultipleParams node, Object data) 
 	{
 	       Object obj = super.visit(node, data);
@@ -163,13 +107,6 @@ public class TypeSetterVisitor extends HtScrapeVisitorAdapter
 	}
 
 	public Object visit(ASTPrintStatement node, Object data) 
-	{
-	       Object obj = super.visit(node, data);
-	        setType(node);
-	        return obj;
-	}
-
-	public Object visit(ASTCloseStatement node, Object data) 
 	{
 	       Object obj = super.visit(node, data);
 	        setType(node);

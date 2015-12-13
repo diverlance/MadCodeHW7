@@ -8,7 +8,7 @@ options
     NODE_EXTENDS="wci.intermediate.icodeimpl.ICodeNodeImpl";
     MULTI=true;
     VISITOR=true;
-    //DEBUG_PARSER=true;
+    DEBUG_PARSER=true;
 }
 
 PARSER_BEGIN(HtScrape)
@@ -245,6 +245,7 @@ TOKEN: /*HtScrape Tokens */
 | <DOUBLE_EQUAL : "=="> { debugStream.println("DOUBLE_EQUAL token: " + matchedToken.image); }
 | <NOT_EQUAL : "!="> { debugStream.println("NOT_EQUAL token: " + matchedToken.image); }
 | <PLUS_PLUS : "++" > { debugStream.println("PLUS_PLUS token: " + matchedToken.image); }
+| <INCREASE : "+=" > { debugStream.println("PLUS_PLUS token: " + matchedToken.image); }
 }
 
 	//production rules
@@ -277,7 +278,6 @@ TOKEN: /*HtScrape Tokens */
 	    IntDeclaration() |
 	    NumberDeclaration() |
 	    StringDeclaration() |
-	    ArithmeticStatement()|
 	    lookahead()|
 	    PrintStatement() |
 	    PrintFullTableStatement()|
@@ -348,18 +348,29 @@ TOKEN: /*HtScrape Tokens */
 	}
 
 	void ArithmeticStatement() : {}	{
-	  < PLUS_PLUS >
+	  Expression()
+	  < SEMICOLON >
 	  {
-	    System.out.println("Successfully parsed a Number Declaration!\n");
+	    System.out.println("Successfully parsed an Arithmetic Statement!\n");
 	  }	}
 	void lookahead() : {}
 	{
-	 	variable()
-	 	(< EQUALS > | ArithmeticStatement())
-	 	(SimpleAssignment()|ComplexAssignment())
-	 		}
+	  (LOOKAHEAD(2)
+	 	ArithmeticStatement()
+		|
+	 	lookahead2()
+	 	) 		}
+	void lookahead2() : {}
+	{
+	  (LOOKAHEAD(< DOUBLE_EQUAL ><INTEGER >)
+	  SimpleAssignment()
+		|
+	  ComplexAssignment()
+	)	}
 	void SimpleAssignment() : {}
 	{
+	  variable()
+	  < DOUBLE_EQUAL >
 	  (
 	    integerConstant()
 	  |
@@ -371,6 +382,8 @@ TOKEN: /*HtScrape Tokens */
 
 	void ComplexAssignment() :{}
 	{
+	  variable()
+	  < DOUBLE_EQUAL >
 	  Expression()
 	  < SEMICOLON >
 	  { System.out.println("Successfully parsed a Complex Assignment!\n"); }
@@ -421,7 +434,7 @@ TOKEN: /*HtScrape Tokens */
 	 	MultipleParams()
 	  < RIGHT_PAREN >
 	  < SEMICOLON >
-	  { System.out.println("Successfully parsed a Print Statement!\n"); }
+	  { System.out.println("Successfully parsed a PrintFullStatement Statement!\n"); }
 	}
 
 	void PrintDataStatement() : {}
@@ -431,7 +444,7 @@ TOKEN: /*HtScrape Tokens */
 	  MultipleParams()
 	  < RIGHT_PAREN >
 	  < SEMICOLON >
-	  { System.out.println("Successfully parsed a Print Statement!\n"); }
+	  { System.out.println("Successfully parsed a PrintData Statement!\n"); }
 	}
 
     void IfStatement() : {}
@@ -461,7 +474,7 @@ TOKEN: /*HtScrape Tokens */
 	void Operator() : {} 
 	{
   		Operand()
-  		expr_operator()
+  		(expr_operator()|arith_operator())
   		Operand()
 	}
 	
@@ -483,6 +496,12 @@ TOKEN: /*HtScrape Tokens */
 	    jjtThis.setAttribute(ID, token);
 	  }
 	}
+	void arith_operator(): {Token t;}
+	{
+	  {System.out.println("Operator:");}
+	  < INCREASE >
+	  {	    jjtThis.setAttribute(ID, token);
+	  }	}
 
 	void integerConstant() : {}
 	{
