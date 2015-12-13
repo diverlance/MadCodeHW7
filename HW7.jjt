@@ -8,7 +8,7 @@ options
     NODE_EXTENDS="wci.intermediate.icodeimpl.ICodeNodeImpl";
     MULTI=true;
     VISITOR=true;
-    DEBUG_PARSER=true;
+    //DEBUG_PARSER=true;
 }
 
 PARSER_BEGIN(HtScrape)
@@ -348,21 +348,23 @@ TOKEN: /*HtScrape Tokens */
 	}
 
 	void ArithmeticStatement() : {}	{
-	  Expression()
+	  variable()
+	  < INCREASE >
+	  Operand()
 	  < SEMICOLON >
 	  {
 	    System.out.println("Successfully parsed an Arithmetic Statement!\n");
 	  }	}
 	void lookahead() : {}
 	{
-	  (LOOKAHEAD(2)
+	  (LOOKAHEAD(variable()<INCREASE>)
 	 	ArithmeticStatement()
 		|
 	 	lookahead2()
 	 	) 		}
 	void lookahead2() : {}
 	{
-	  (LOOKAHEAD(< DOUBLE_EQUAL ><INTEGER >)
+	  (LOOKAHEAD(2)
 	  SimpleAssignment()
 		|
 	  ComplexAssignment()
@@ -370,7 +372,7 @@ TOKEN: /*HtScrape Tokens */
 	void SimpleAssignment() : {}
 	{
 	  variable()
-	  < DOUBLE_EQUAL >
+	  < EQUALS >
 	  (
 	    integerConstant()
 	  |
@@ -383,7 +385,7 @@ TOKEN: /*HtScrape Tokens */
 	void ComplexAssignment() :{}
 	{
 	  variable()
-	  < DOUBLE_EQUAL >
+	  < EQUALS >
 	  Expression()
 	  < SEMICOLON >
 	  { System.out.println("Successfully parsed a Complex Assignment!\n"); }
@@ -474,7 +476,7 @@ TOKEN: /*HtScrape Tokens */
 	void Operator() : {} 
 	{
   		Operand()
-  		(expr_operator()|arith_operator())
+  		expr_operator()
   		Operand()
 	}
 	
@@ -500,6 +502,7 @@ TOKEN: /*HtScrape Tokens */
 	{
 	  {System.out.println("Operator:");}
 	  < INCREASE >
+	  Operand()
 	  {	    jjtThis.setAttribute(ID, token);
 	  }	}
 
