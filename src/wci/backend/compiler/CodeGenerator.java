@@ -100,17 +100,17 @@ public class CodeGenerator extends Backend
         objectFile.println();
         
         // Generate the main method prologue.
-        objectFile.println("    new	 RunTimer");
-        objectFile.println("    dup");
-        objectFile.println("    invokenonvirtual	RunTimer/<init>()V");
-        objectFile.println("    putstatic	" + programName +
-        		           "/_runTimer LRunTimer;");
-        objectFile.println("    new	 PascalTextIn");
-        objectFile.println("    dup");
-        objectFile.println("    invokenonvirtual	PascalTextIn/<init>()V");
-        objectFile.println("    putstatic	" + programName +
-        		           "/_standardIn LPascalTextIn;");
-        objectFile.println();
+        //objectFile.println("    new	 RunTimer");
+        //objectFile.println("    dup");
+        //objectFile.println("    invokenonvirtual	RunTimer/<init>()V");
+        //objectFile.println("    putstatic	" + programName +
+        //		           "/_runTimer LRunTimer;");
+        //objectFile.println("    new	 PascalTextIn");
+        //objectFile.println("    dup");
+        //objectFile.println("    invokenonvirtual	PascalTextIn/<init>()V");
+        //objectFile.println("    putstatic	" + programName +
+        //		           "/_standardIn LPascalTextIn;");
+        //objectFile.println();
         objectFile.flush();
 
         // Visit the parse tree nodes to generate code 
@@ -121,9 +121,9 @@ public class CodeGenerator extends Backend
         objectFile.println();
 
         // Generate the main method epilogue.
-        objectFile.println("    getstatic	" + programName +
-        		           "/_runTimer LRunTimer;");
-        objectFile.println("    invokevirtual	RunTimer.printElapsedTime()V");
+        //objectFile.println("    getstatic	" + programName +
+        //		           "/_runTimer LRunTimer;");
+        //objectFile.println("    invokevirtual	RunTimer.printElapsedTime()V");
         objectFile.println();
         objectFile.println("    return");
         objectFile.println();

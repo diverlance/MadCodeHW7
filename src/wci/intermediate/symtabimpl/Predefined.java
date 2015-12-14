@@ -94,7 +94,7 @@ public class Predefined
         integerId.setTypeSpec(integerType);
 
         // Type real.
-        realId = symTabStack.enterLocal("number");
+        realId = symTabStack.enterLocal("num");
         realType = TypeFactory.createType(SCALAR);
         realType.setIdentifier(realId);
         realId.setDefinition(DefinitionImpl.TYPE);
@@ -135,14 +135,14 @@ public class Predefined
         tableId.setDefinition(DefinitionImpl.TYPE);
         tableId.setTypeSpec(tableType);
         
-        // type Table_Data.
+        // type File.
         tableDataId = symTabStack.enterLocal("table_data");
         tableDataType = TypeFactory.createType(SCALAR);
         tableDataType.setIdentifier(tableDataId);
         tableDataId.setDefinition(DefinitionImpl.TYPE);
         tableDataId.setTypeSpec(tableDataType);
         
-        // type Color.
+        // type File.
         colorId = symTabStack.enterLocal("color");
         colorType = TypeFactory.createType(SCALAR);
         colorType.setIdentifier(colorId);

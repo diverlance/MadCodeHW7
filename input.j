@@ -4,10 +4,11 @@
 .field private static _runTimer LRunTimer;
 .field private static _standardIn LPascalTextIn;
 
-.field private static filename I
+.field private static filename F
 .field private static i I
 .field private static j I
 .field private static maxCol I
+.field private static s2 F
 
 .method public <init>()V
 
@@ -21,24 +22,35 @@
 
 .method public static main([Ljava/lang/String;)V
 
-    new	 RunTimer
-    dup
-    invokenonvirtual	RunTimer/<init>()V
-    putstatic	Input/_runTimer LRunTimer;
-    new	 PascalTextIn
-    dup
-    invokenonvirtual	PascalTextIn/<init>()V
-    putstatic	Input/_standardIn LPascalTextIn;
-
     ldc 3
+    putstatic Input/i I
+    ldc "newpage2.html"
+    astore_1
     ldc 4
+    putstatic Input/j I
+    ldc "Yes!!"
+    astore_3
     ldc 4
+    putstatic Input/maxCol I
+    getstatic     java/lang/System/out Ljava/io/PrintStream;
+    aload_1
+    invokevirtual java/io/PrintStream.println(Ljava/lang/String;)V
+    getstatic     java/lang/System/out Ljava/io/PrintStream;
+    aload_3
+    invokevirtual java/io/PrintStream.println(Ljava/lang/String;)V
+    getstatic Input/i I
+    ldc 0
+    putstatic Input/i I
+    getstatic Input/i I
+    ldc 0
+    putstatic Input/i I
+    getstatic Input/i I
+    ldc 0
+    putstatic Input/i I
 
-    getstatic	Input/_runTimer LRunTimer;
-    invokevirtual	RunTimer.printElapsedTime()V
 
     return
 
-.limit locals 4
+.limit locals 5
 .limit stack  16
 .end method

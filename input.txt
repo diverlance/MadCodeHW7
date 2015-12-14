@@ -1,6 +1,12 @@
-	int i =3;
-	string filename = "newpage.html";
-	int j=4;
-	int maxCol = 4;
+int i = 3;
+if(i<0){
+	i == 0;
+}
+string filename = "newpage.html";
+printFullTable(filename, 1);
 
-
+while (i < 10){
+	print("This is hell."); //print table
+	printData(filename, 1, i, 2);
+	i+=1;
+}
