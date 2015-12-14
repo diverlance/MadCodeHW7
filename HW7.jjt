@@ -470,11 +470,14 @@ TOKEN: /*HtScrape Tokens */
 
     void IfStatement() : {}
     {
+    try {
   		<IF><LEFT_PAREN>Expression()<RIGHT_PAREN>
   		<LEFT_CURLY >
   			Statement()
   		<RIGHT_CURLY >
   		[ ElseStatement()]
+                }
+                catch(ParseException ex){handleLoopError(ex);}
     	{ System.out.println("Successfully parsed an if statement!\n"); }
 	}
 	void ElseStatement() : {}
@@ -489,6 +492,7 @@ TOKEN: /*HtScrape Tokens */
 	}
 	void WhileStatement() : {}
 	{
+        try {
 	  < WHILE >
 	  < LEFT_PAREN >
 	  Expression()
@@ -496,6 +500,8 @@ TOKEN: /*HtScrape Tokens */
 	  <LEFT_CURLY >
   	   	Statement()
   		<RIGHT_CURLY >
+                }
+                catch(ParseException ex){handleLoopError(ex);}
     	{ System.out.println("Successfully parsed an if statement!\n"); }
 	}
 	void Expression() : {} 
@@ -609,5 +615,32 @@ String handleError(ParseException ex) #void
     } while (token.kind != SEMICOLON);
 
 	jjtree.popNode();
+    return token.image;
+}
+
+JAVACODE
+String handleLoopError(ParseException ex) #void
+{
+    Token token = ex.currentToken;
+    System.out.println(ex.getMessage());
+    
+    boolean popNow = false;
+    Token temp; 
+    while(token.kind != RIGHT_CURLY || popNow == false)
+    {
+        if(token.kind == RIGHT_CURLY)
+        {
+            temp = token;
+            token = getNextToken();
+            if(token.kind != ELSE)
+            {
+                token = temp;
+                popNow = true;
+                break;
+            }
+        }
+        else{token = getNextToken();}
+    }
+        jjtree.popNode();
     return token.image;
 }
