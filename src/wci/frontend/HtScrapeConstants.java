@@ -37,87 +37,91 @@ public interface HtScrapeConstants {
   /** RegularExpression Id. */
   int RETURN = 19;
   /** RegularExpression Id. */
-  int INT = 20;
+  int PROCEDURE = 20;
   /** RegularExpression Id. */
-  int STRING = 21;
+  int INT = 21;
   /** RegularExpression Id. */
-  int TRUE = 22;
+  int NUM = 22;
   /** RegularExpression Id. */
-  int FALSE = 23;
+  int STRING = 23;
   /** RegularExpression Id. */
-  int TRY = 24;
+  int TRUE = 24;
   /** RegularExpression Id. */
-  int CATCH = 25;
+  int FALSE = 25;
   /** RegularExpression Id. */
-  int FOR = 26;
+  int TRY = 26;
   /** RegularExpression Id. */
-  int NULL = 27;
+  int CATCH = 27;
   /** RegularExpression Id. */
-  int GET = 28;
+  int FOR = 28;
   /** RegularExpression Id. */
-  int PRINT = 29;
+  int NULL = 29;
   /** RegularExpression Id. */
-  int PRINT_FULL_TABLE = 30;
+  int GET = 30;
   /** RegularExpression Id. */
-  int PRINT_DATA = 31;
+  int PRINT = 31;
   /** RegularExpression Id. */
-  int IDENTIFIER = 32;
+  int PRINT_FULL_TABLE = 32;
   /** RegularExpression Id. */
-  int LEFT_PAREN = 33;
+  int PRINT_DATA = 33;
   /** RegularExpression Id. */
-  int RIGHT_PAREN = 34;
+  int IDENTIFIER = 34;
   /** RegularExpression Id. */
-  int LEFT_CURLY = 35;
+  int LEFT_PAREN = 35;
   /** RegularExpression Id. */
-  int RIGHT_CURLY = 36;
+  int RIGHT_PAREN = 36;
   /** RegularExpression Id. */
-  int PLUS = 37;
+  int LEFT_CURLY = 37;
   /** RegularExpression Id. */
-  int MINUS = 38;
+  int RIGHT_CURLY = 38;
   /** RegularExpression Id. */
-  int MULTIPLY = 39;
+  int PLUS = 39;
   /** RegularExpression Id. */
-  int DIVIDE = 40;
+  int MINUS = 40;
   /** RegularExpression Id. */
-  int EQUALS = 41;
+  int MULTIPLY = 41;
   /** RegularExpression Id. */
-  int LESS_THAN = 42;
+  int DIVIDE = 42;
   /** RegularExpression Id. */
-  int GREATER_THAN = 43;
+  int EQUALS = 43;
   /** RegularExpression Id. */
-  int BANG = 44;
+  int LESS_THAN = 44;
   /** RegularExpression Id. */
-  int COMMA = 45;
+  int GREATER_THAN = 45;
   /** RegularExpression Id. */
-  int PERIOD = 46;
+  int BANG = 46;
   /** RegularExpression Id. */
-  int SEMICOLON = 47;
+  int COMMA = 47;
   /** RegularExpression Id. */
-  int AT_SIGN = 48;
+  int PERIOD = 48;
   /** RegularExpression Id. */
-  int POUND_SIGN = 49;
+  int SEMICOLON = 49;
   /** RegularExpression Id. */
-  int LETTER = 50;
+  int AT_SIGN = 50;
   /** RegularExpression Id. */
-  int DIGIT = 51;
+  int POUND_SIGN = 51;
   /** RegularExpression Id. */
-  int LESS_EQUAL = 52;
+  int LETTER = 52;
   /** RegularExpression Id. */
-  int GREATER_EQUAL = 53;
+  int DIGIT = 53;
   /** RegularExpression Id. */
-  int DOUBLE_EQUAL = 54;
+  int LESS_EQUAL = 54;
   /** RegularExpression Id. */
-  int NOT_EQUAL = 55;
+  int GREATER_EQUAL = 55;
   /** RegularExpression Id. */
-  int PLUS_PLUS = 56;
+  int DOUBLE_EQUAL = 56;
   /** RegularExpression Id. */
-  int PLUS_EQUAL = 57;
+  int NOT_EQUAL = 57;
   /** RegularExpression Id. */
-  int MINUS_EQUAL = 58;
+  int PLUS_PLUS = 58;
   /** RegularExpression Id. */
-  int MULTIPLY_EQUAL = 59;
+  int PLUS_EQUAL = 59;
   /** RegularExpression Id. */
-  int DIVIDE_EQUAL = 60;
+  int MINUS_EQUAL = 60;
+  /** RegularExpression Id. */
+  int MULTIPLY_EQUAL = 61;
+  /** RegularExpression Id. */
+  int DIVIDE_EQUAL = 62;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -144,7 +148,9 @@ public interface HtScrapeConstants {
     "\"break\"",
     "\"void\"",
     "\"return\"",
+    "\"procedure\"",
     "\"int\"",
+    "\"num\"",
     "\"string\"",
     "\"true\"",
     "\"false\"",
