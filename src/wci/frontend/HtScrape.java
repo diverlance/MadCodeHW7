@@ -34,7 +34,7 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
 
         // Process the source file path which ends in .pcl
         // and create the output file path which ends in .j
-        String sourceFilePath = "in.txt";
+        String sourceFilePath = "errors.txt";
         int truncatedLength = sourceFilePath.length() - SOURCE_SUFFIX.length();
         int suffixIndex = sourceFilePath.lastIndexOf(SOURCE_SUFFIX);
         String objectFilePath = (suffixIndex == truncatedLength)
@@ -829,42 +829,46 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
       try {
-        jj_consume_token(IF);
-        jj_consume_token(LEFT_PAREN);
-        Expression();
-        jj_consume_token(RIGHT_PAREN);
-        jj_consume_token(LEFT_CURLY);
-        Statement();
-        jj_consume_token(RIGHT_CURLY);
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case ELSE:
-          ElseStatement();
-          break;
-        default:
-          jj_la1[9] = jj_gen;
-          ;
+        try {
+          jj_consume_token(IF);
+          jj_consume_token(LEFT_PAREN);
+          Expression();
+          jj_consume_token(RIGHT_PAREN);
+          jj_consume_token(LEFT_CURLY);
+          Statement();
+          jj_consume_token(RIGHT_CURLY);
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case ELSE:
+            ElseStatement();
+            break;
+          default:
+            jj_la1[9] = jj_gen;
+            ;
+          }
+        } catch (ParseException ex) {
+                                         handleLoopError(ex);
         }
           jjtree.closeNodeScope(jjtn000, true);
           jjtc000 = false;
           System.out.println("Successfully parsed an if statement!\u005cn");
       } catch (Throwable jjte000) {
-                  if (jjtc000) {
-                    jjtree.clearNodeScope(jjtn000);
-                    jjtc000 = false;
-                  } else {
-                    jjtree.popNode();
-                  }
-                  if (jjte000 instanceof RuntimeException) {
-                    {if (true) throw (RuntimeException)jjte000;}
-                  }
-                  if (jjte000 instanceof ParseException) {
-                    {if (true) throw (ParseException)jjte000;}
-                  }
-                  {if (true) throw (Error)jjte000;}
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
       } finally {
-                  if (jjtc000) {
-                    jjtree.closeNodeScope(jjtn000, true);
-                  }
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
       }
     } finally {
       trace_return("IfStatement");
@@ -918,34 +922,38 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
       try {
-        jj_consume_token(WHILE);
-        jj_consume_token(LEFT_PAREN);
-        Expression();
-        jj_consume_token(RIGHT_PAREN);
-        jj_consume_token(LEFT_CURLY);
-        Statement();
-        jj_consume_token(RIGHT_CURLY);
+        try {
+          jj_consume_token(WHILE);
+          jj_consume_token(LEFT_PAREN);
+          Expression();
+          jj_consume_token(RIGHT_PAREN);
+          jj_consume_token(LEFT_CURLY);
+          Statement();
+          jj_consume_token(RIGHT_CURLY);
+        } catch (ParseException ex) {
+                                         handleLoopError(ex);
+        }
           jjtree.closeNodeScope(jjtn000, true);
           jjtc000 = false;
           System.out.println("Successfully parsed an if statement!\u005cn");
       } catch (Throwable jjte000) {
-            if (jjtc000) {
-              jjtree.clearNodeScope(jjtn000);
-              jjtc000 = false;
-            } else {
-              jjtree.popNode();
-            }
-            if (jjte000 instanceof RuntimeException) {
-              {if (true) throw (RuntimeException)jjte000;}
-            }
-            if (jjte000 instanceof ParseException) {
-              {if (true) throw (ParseException)jjte000;}
-            }
-            {if (true) throw (Error)jjte000;}
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            {if (true) throw (RuntimeException)jjte000;}
+          }
+          if (jjte000 instanceof ParseException) {
+            {if (true) throw (ParseException)jjte000;}
+          }
+          {if (true) throw (Error)jjte000;}
       } finally {
-            if (jjtc000) {
-              jjtree.closeNodeScope(jjtn000, true);
-            }
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
       }
     } finally {
       trace_return("WhileStatement");
@@ -1317,6 +1325,36 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
     }
   }
 
+  static String handleLoopError(ParseException ex) throws ParseException {
+    trace_call("handleLoopError");
+    try {
+    Token token = ex.currentToken;
+    System.out.println(ex.getMessage());
+
+    boolean popNow = false;
+    Token temp;
+    while(token.kind != RIGHT_CURLY || popNow == false)
+    {
+        if(token.kind == RIGHT_CURLY)
+        {
+            temp = token;
+            token = getNextToken();
+            if(token.kind != ELSE)
+            {
+                token = temp;
+                popNow = true;
+                break;
+            }
+        }
+        else{token = getNextToken();}
+    }
+        jjtree.popNode();
+    return token.image;
+    } finally {
+      trace_return("handleLoopError");
+    }
+  }
+
   static private boolean jj_2_1(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_1(); }
@@ -1331,39 +1369,8 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
     finally { jj_save(1, xla); }
   }
 
-  static private boolean jj_3R_12() {
-    if (jj_scan_token(INTEGER)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_23() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(39)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(40)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(41)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(42)) return true;
-    }
-    }
-    }
-    return false;
-  }
-
   static private boolean jj_3R_9() {
     if (jj_3R_13()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_6() {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_8() {
-    if (jj_3R_12()) return true;
     return false;
   }
 
@@ -1394,21 +1401,8 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
     return false;
   }
 
-  static private boolean jj_3_2() {
-    if (jj_3R_5()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_5() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(EQUALS)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_8()) {
-    jj_scanpos = xsp;
-    if (jj_3R_9()) return true;
-    }
-    if (jj_scan_token(SEMICOLON)) return true;
+  static private boolean jj_3R_6() {
+    if (jj_scan_token(IDENTIFIER)) return true;
     return false;
   }
 
@@ -1433,6 +1427,16 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
     return false;
   }
 
+  static private boolean jj_3R_8() {
+    if (jj_3R_12()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_2() {
+    if (jj_3R_5()) return true;
+    return false;
+  }
+
   static private boolean jj_3R_17() {
     if (jj_3R_13()) return true;
     return false;
@@ -1444,8 +1448,16 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
     return false;
   }
 
-  static private boolean jj_3_1() {
-    if (jj_3R_4()) return true;
+  static private boolean jj_3R_5() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(EQUALS)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_8()) {
+    jj_scanpos = xsp;
+    if (jj_3R_9()) return true;
+    }
+    if (jj_scan_token(SEMICOLON)) return true;
     return false;
   }
 
@@ -1456,6 +1468,11 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
       xsp = jj_scanpos;
       if (jj_3R_22()) { jj_scanpos = xsp; break; }
     }
+    return false;
+  }
+
+  static private boolean jj_3_1() {
+    if (jj_3R_4()) return true;
     return false;
   }
 
@@ -1498,6 +1515,11 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
     return false;
   }
 
+  static private boolean jj_3R_12() {
+    if (jj_scan_token(INTEGER)) return true;
+    return false;
+  }
+
   static private boolean jj_3R_4() {
     if (jj_3R_6()) return true;
     Token xsp;
@@ -1514,6 +1536,22 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
     }
     if (jj_3R_7()) return true;
     if (jj_scan_token(SEMICOLON)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_23() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(39)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(40)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(41)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(42)) return true;
+    }
+    }
+    }
     return false;
   }
 

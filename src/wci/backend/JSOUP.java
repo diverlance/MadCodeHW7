@@ -11,17 +11,18 @@ public class JSOUP
 {
 	public static void main(String []args) throws IOException
 	{
-		String html = "http://online.sjsu.edu/docs/cies/2161_WINTER_IES.htm";
+		//String html = "http://online.sjsu.edu/docs/cies/2161_WINTER_IES.htm";
 		
 		//printFullTable(html, 2);
 		
-		printData(html, 2, 2, 1);
+		//printData(html, 2, 2, 1);
 	}
 	
 	public static String errorMessage = "";
 	
-	public static void printFullTable(String filename, int tableNum) throws IOException
+	public static void printFullTable(String filename,int tableNum) throws IOException
 	{
+		
 		int t = 1;
 		try
 		{

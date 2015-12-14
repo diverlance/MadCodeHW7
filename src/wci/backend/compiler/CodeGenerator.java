@@ -63,23 +63,29 @@ public class CodeGenerator extends Backend
         objectFile.println(".class public " + programName);
         objectFile.println(".super java/lang/Object");
         objectFile.println();
-        
-        // Generate code for the timer and standard input fields.
-        objectFile.println(".field private static _runTimer LRunTimer;");
-        objectFile.println(".field private static _standardIn LPascalTextIn;");
-        objectFile.println();
-        
+
         // Generate code for fields.
-        for (SymTabEntry id : locals) {
-            Definition defn = id.getDefinition();
-            
-            if (defn == VARIABLE) {
-                String fieldName = id.getName();
-                TypeSpec type = id.getTypeSpec();
-                String typeCode = type == Predefined.integerType ? "I" : "F";
-                objectFile.println(".field private static " + fieldName + 
-                		           " " + typeCode);
-            }
+        //for (SymTabEntry id : locals) {
+        for (int outOrder=0;outOrder<locals.size();outOrder++) {
+        	for(int inOrder=0; inOrder<locals.size();inOrder++) {
+        		if(outOrder==locals.get(inOrder).getIndex()) {
+
+        			SymTabEntry id = locals.get(inOrder);
+        			Definition defn = id.getDefinition();
+
+        			if (defn == VARIABLE) {
+        				String fieldName = id.getName();
+        				TypeSpec type = id.getTypeSpec();
+        				String typeCode;
+        				if(type == Predefined.stringType)
+        					typeCode="Ljava/lang/String;";
+        				else
+        					typeCode = type == Predefined.integerType ? "I" : "F";
+        				objectFile.println(".field private static " + fieldName + 
+        						" " + typeCode);
+        			}
+        		}
+        	}
         }
         objectFile.println();
         

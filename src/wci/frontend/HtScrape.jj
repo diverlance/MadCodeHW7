@@ -52,7 +52,7 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants/*@egen*/
 
         // Process the source file path which ends in .pcl
         // and create the output file path which ends in .j
-        String sourceFilePath = "in.txt";
+        String sourceFilePath = "errors.txt";
         int truncatedLength = sourceFilePath.length() - SOURCE_SUFFIX.length();
         int suffixIndex = sourceFilePath.lastIndexOf(SOURCE_SUFFIX);
         String objectFilePath = (suffixIndex == truncatedLength)
@@ -931,38 +931,41 @@ TOKEN: /*HtScrape Tokens */
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
     {/*@bgen(jjtree) IfStatement */
-                try {
+    try {
 /*@egen*/
+    try {
   		<IF><LEFT_PAREN>Expression()<RIGHT_PAREN>
   		<LEFT_CURLY >
   			Statement()
   		<RIGHT_CURLY >
-  		[ ElseStatement()]/*@bgen(jjtree)*/
+  		[ ElseStatement()]
+                }
+                catch(ParseException ex){handleLoopError(ex);}/*@bgen(jjtree)*/
         {
           jjtree.closeNodeScope(jjtn000, true);
           jjtc000 = false;
         }
 /*@egen*/
     	{ System.out.println("Successfully parsed an if statement!\n"); }/*@bgen(jjtree)*/
-                } catch (Throwable jjte000) {
-                  if (jjtc000) {
-                    jjtree.clearNodeScope(jjtn000);
-                    jjtc000 = false;
-                  } else {
-                    jjtree.popNode();
-                  }
-                  if (jjte000 instanceof RuntimeException) {
-                    throw (RuntimeException)jjte000;
-                  }
-                  if (jjte000 instanceof ParseException) {
-                    throw (ParseException)jjte000;
-                  }
-                  throw (Error)jjte000;
-                } finally {
-                  if (jjtc000) {
-                    jjtree.closeNodeScope(jjtn000, true);
-                  }
-                }
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
 /*@egen*/
 	}
 	void ElseStatement() : {/*@bgen(jjtree) ElseStatement */
@@ -1012,40 +1015,43 @@ TOKEN: /*HtScrape Tokens */
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
 	{/*@bgen(jjtree) WhileStatement */
-          try {
+        try {
 /*@egen*/
+        try {
 	  < WHILE >
 	  < LEFT_PAREN >
 	  Expression()
 	  < RIGHT_PAREN >
 	  <LEFT_CURLY >
   	   	Statement()
-  		<RIGHT_CURLY >/*@bgen(jjtree)*/
+  		<RIGHT_CURLY >
+                }
+                catch(ParseException ex){handleLoopError(ex);}/*@bgen(jjtree)*/
         {
           jjtree.closeNodeScope(jjtn000, true);
           jjtc000 = false;
         }
 /*@egen*/
     	{ System.out.println("Successfully parsed an if statement!\n"); }/*@bgen(jjtree)*/
-          } catch (Throwable jjte000) {
-            if (jjtc000) {
-              jjtree.clearNodeScope(jjtn000);
-              jjtc000 = false;
-            } else {
-              jjtree.popNode();
-            }
-            if (jjte000 instanceof RuntimeException) {
-              throw (RuntimeException)jjte000;
-            }
-            if (jjte000 instanceof ParseException) {
-              throw (ParseException)jjte000;
-            }
-            throw (Error)jjte000;
-          } finally {
-            if (jjtc000) {
-              jjtree.closeNodeScope(jjtn000, true);
-            }
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
           }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
 /*@egen*/
 	}
 	void Expression() : {/*@bgen(jjtree) Expression */
@@ -1332,5 +1338,32 @@ String handleError(ParseException ex)
     } while (token.kind != SEMICOLON);
 
 	jjtree.popNode();
+    return token.image;
+}
+
+JAVACODE
+String handleLoopError(ParseException ex)      
+{
+    Token token = ex.currentToken;
+    System.out.println(ex.getMessage());
+    
+    boolean popNow = false;
+    Token temp; 
+    while(token.kind != RIGHT_CURLY || popNow == false)
+    {
+        if(token.kind == RIGHT_CURLY)
+        {
+            temp = token;
+            token = getNextToken();
+            if(token.kind != ELSE)
+            {
+                token = temp;
+                popNow = true;
+                break;
+            }
+        }
+        else{token = getNextToken();}
+    }
+        jjtree.popNode();
     return token.image;
 }

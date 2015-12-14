@@ -12,8 +12,8 @@ public class CodeGeneratorVisitor
     extends HtScrapeVisitorAdapter
     implements HtScrapeTreeConstants
 {
-	private final String RTLLibPath = "java/lang/System/out Ljava/io/PrintStream;";
-	private final String RTLProcPath = "java/io/PrintStream.println(Ljava/lang/String;)V";
+	private final String RTLPrintFullPath = "wci/backend/JSOUP/printFullTable(Ljava/lang/String;I)V";
+	private final String RTLPrintDataPath = "wci/backend/JSOUP/printData(Ljava/lang/String;III)V";
 	private int label = 1;
 	
     public Object visit(ASTSimpleAssignment node, Object data)
@@ -40,11 +40,17 @@ public class CodeGeneratorVisitor
         SymTabEntry id = (SymTabEntry) variableNode.getAttribute(ID);
         String fieldName = id.getName();
         TypeSpec type = id.getTypeSpec();
-        String typeCode = type == Predefined.integerType ? "I" : "F";
-
-        // Emit the appropriate store instruction.
-        CodeGenerator.objectFile.println("    putstatic " + programName +
+        if(type == Predefined.stringType)
+        {
+        	CodeGenerator.objectFile.println("    astore " + (id.getIndex()+1));
+        }
+        else
+        {
+        	String typeCode = type == Predefined.integerType ? "I" : "F";
+        	// Emit the appropriate store instruction.
+        	CodeGenerator.objectFile.println("    putstatic " + programName +
         		                         "/" + fieldName + " " + typeCode);
+        }
         CodeGenerator.objectFile.flush();
 
         return data;
@@ -74,11 +80,17 @@ public class CodeGeneratorVisitor
         SymTabEntry id = (SymTabEntry) variableNode.getAttribute(ID);
         String fieldName = id.getName();
         TypeSpec type = id.getTypeSpec();
-        String typeCode = type == Predefined.integerType ? "I" : "F";
-
-        // Emit the appropriate store instruction.
-        CodeGenerator.objectFile.println("    putstatic " + programName +
+        if(type == Predefined.stringType)
+        {
+        	CodeGenerator.objectFile.println("    astore " + (id.getIndex()+1));
+        }
+        else
+        {
+        	String typeCode = type == Predefined.integerType ? "I" : "F";
+        	// Emit the appropriate store instruction.
+        	CodeGenerator.objectFile.println("    putstatic " + programName +
         		                         "/" + fieldName + " " + typeCode);
+        }
         CodeGenerator.objectFile.flush();
 
         return data;
@@ -149,7 +161,7 @@ public class CodeGeneratorVisitor
         TypeSpec type = id.getTypeSpec();
 
         // Emit the appropriate store instruction.
-        CodeGenerator.objectFile.println("    astore_" + id.getIndex());
+        CodeGenerator.objectFile.println("    astore " + (id.getIndex()+1));
         CodeGenerator.objectFile.flush();
 
         return data;
@@ -171,7 +183,7 @@ public class CodeGeneratorVisitor
         else
         	typeCode = "";
         if(type==Predefined.stringType)
-        	CodeGenerator.objectFile.println("    aload_"+id.getIndex());
+        	CodeGenerator.objectFile.println("    aload "+(id.getIndex()+1));
         // Emit the appropriate load instruction.
         else
         	CodeGenerator.objectFile.println("    getstatic " + programName +
@@ -224,11 +236,14 @@ public class CodeGeneratorVisitor
         TypeSpec type = id.getTypeSpec();
         // Emit a load constant instruction.
         CodeGenerator.objectFile.println("    getstatic     java/lang/System/out Ljava/io/PrintStream;");
-        //CodeGenerator.objectFile.println("    aload_"+id.getIndex());
-        if(type==Predefined.stringType)
-        	variableNode.jjtAccept(this, data);
-        else
-        	CodeGenerator.objectFile.println("    get"+id.getIndex());
+        //emit call to load parameter
+        variableNode.jjtAccept(this, data);
+        //if the parameter type is and int or float, call String.ValueOf to convert to string
+        if(type==Predefined.integerType)
+        	CodeGenerator.objectFile.println("    invokestatic     java/lang/String.valueOf(I)Ljava/lang/String;");
+        else if (type==Predefined.realType)
+        	CodeGenerator.objectFile.println("    invokestatic     java/lang/String.valueOf(F)Ljava/lang/String;");
+        //emit call to println
         CodeGenerator.objectFile.println("    invokevirtual java/io/PrintStream.println(Ljava/lang/String;)V");
         CodeGenerator.objectFile.flush();
 
@@ -237,20 +252,14 @@ public class CodeGeneratorVisitor
     
     public Object visit(ASTPrintFullTableStatement node, Object data)
     {
-        String value = (String) node.getAttribute(VALUE);
         SimpleNode variable1Node   = (SimpleNode) node.jjtGetChild(0).jjtGetChild(0);
-        SymTabEntry id1 = (SymTabEntry) variable1Node.getAttribute(ID);
         SimpleNode variable2Node   = (SimpleNode) node.jjtGetChild(0).jjtGetChild(1);
-        SymTabEntry id2 = (SymTabEntry) variable2Node.getAttribute(ID);
         
-        // Emit a load constant instruction.
-        CodeGenerator.objectFile.println("    getstatic     "+RTLLibPath);
-        //CodeGenerator.objectFile.println("    aload_"+id1.getIndex());
-        
+        // Express the parameters.
         variable1Node.jjtAccept(this, data);
         variable2Node.jjtAccept(this, data);
-        
-        CodeGenerator.objectFile.println("    invokevirtual "+RTLProcPath);
+        //emit call to RTL
+        CodeGenerator.objectFile.println("    invokestatic "+RTLPrintFullPath);
         CodeGenerator.objectFile.flush();
 
         return data;
@@ -258,26 +267,17 @@ public class CodeGeneratorVisitor
     
     public Object visit(ASTPrintDataStatement node, Object data)
     {
-        String value = (String) node.getAttribute(VALUE);
         SimpleNode variable1Node   = (SimpleNode) node.jjtGetChild(0).jjtGetChild(0);
-        SymTabEntry id1 = (SymTabEntry) variable1Node.getAttribute(ID);
         SimpleNode variable2Node   = (SimpleNode) node.jjtGetChild(0).jjtGetChild(1);
-        SymTabEntry id2 = (SymTabEntry) variable2Node.getAttribute(ID);
         SimpleNode variable3Node   = (SimpleNode) node.jjtGetChild(0).jjtGetChild(2);
-        SymTabEntry id3 = (SymTabEntry) variable3Node.getAttribute(ID);
         SimpleNode variable4Node   = (SimpleNode) node.jjtGetChild(0).jjtGetChild(3);
-        SymTabEntry id4 = (SymTabEntry) variable4Node.getAttribute(ID);
-        
-        // Emit a load constant instruction.
-        CodeGenerator.objectFile.println("    getstatic     "+RTLLibPath);
-        //CodeGenerator.objectFile.println("    aload_"+id1.getIndex());
         
         variable1Node.jjtAccept(this, data);
         variable2Node.jjtAccept(this, data);
         variable3Node.jjtAccept(this, data);
         variable4Node.jjtAccept(this, data);
         
-        CodeGenerator.objectFile.println("    invokevirtual "+RTLProcPath);
+        CodeGenerator.objectFile.println("    invokestatic "+RTLPrintDataPath);
         CodeGenerator.objectFile.flush();
 
         return data;
