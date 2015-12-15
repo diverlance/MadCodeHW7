@@ -34,7 +34,7 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants/*@egen*/
   protected static JJTHtScrapeState jjtree = new JJTHtScrapeState();
 
 /*@egen*/
-    private static final String SOURCE_SUFFIX = ".txt";
+    private static final String SOURCE_SUFFIX = ".hts";
     private static final String OUTPUT_SUFFIX = ".j";
 
     private static SymTabStack symTabStack;
@@ -50,9 +50,9 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants/*@egen*/
         symTabStack = SymTabFactory.createSymTabStack();
         Predefined.initialize(symTabStack);
 
-        // Process the source file path which ends in .pcl
+// Process the source file path which ends in .hts
         // and create the output file path which ends in .j
-        String sourceFilePath = "errors.txt";
+        String sourceFilePath = args[0];
         int truncatedLength = sourceFilePath.length() - SOURCE_SUFFIX.length();
         int suffixIndex = sourceFilePath.lastIndexOf(SOURCE_SUFFIX);
         String objectFilePath = (suffixIndex == truncatedLength)
@@ -156,8 +156,8 @@ TOKEN: /*HtScrape Tokens */
     < RETURN: "return" >
     { debugStream.println("RETURN token: " + matchedToken.image); }
     |
-	< PROCEDURE: "procedure" >
-	{ debugStream.println("PROCEDURE token: " + matchedToken.image); }
+	< FUNC: "func" >
+	{ debugStream.println("FUNC token: " + matchedToken.image); }
 	| 
     < INT: "int" >
     { debugStream.println("INT token: " + matchedToken.image); }
@@ -197,7 +197,10 @@ TOKEN: /*HtScrape Tokens */
 	|
  	< PRINT_DATA: "printData" >
  	{ debugStream.println("PRINT_DATA token: " + matchedToken.image); }
-	|  
+	|
+	< GET_DATA: "getData" >
+ 	{ debugStream.println("GET_DATA token: " + matchedToken.image); }
+	| 
     <IDENTIFIER: (["a"-"z", "A"-"Z"])(["a"-"z", "A"-"Z", "0"-"9","_", "-"])* >  
    	{ debugStream.println("IDENTIFIER token: " + matchedToken.image); }
     |
@@ -315,7 +318,6 @@ TOKEN: /*HtScrape Tokens */
 /*@egen*/
 	  	
 } 
- 
 	
 	SimpleNode Statement() : {/*@bgen(jjtree) Statement */
   ASTStatement jjtn000 = new ASTStatement(JJTSTATEMENT);
@@ -332,7 +334,8 @@ TOKEN: /*HtScrape Tokens */
 	    lookahead()|
 	    PrintStatement() |
 	    PrintFullTableStatement()|
-	    PrintDataStatement()|
+	    PrintDataStatement() |
+	    GetDataStatement() |
 	    IfStatement()|
 	    WhileStatement()
 	  )*/*@bgen(jjtree)*/
@@ -728,7 +731,7 @@ TOKEN: /*HtScrape Tokens */
 	  }
 	  newVariable(type)
 	  < EQUALS >
-	  stringConstant()
+	  stringConstant() 
 	  < SEMICOLON >/*@bgen(jjtree)*/
           {
             jjtree.closeNodeScope(jjtn000, true);
@@ -903,6 +906,47 @@ TOKEN: /*HtScrape Tokens */
           }
 /*@egen*/
 	  { System.out.println("Successfully parsed a PrintData Statement!\n"); }/*@bgen(jjtree)*/
+          } catch (Throwable jjte000) {
+            if (jjtc000) {
+              jjtree.clearNodeScope(jjtn000);
+              jjtc000 = false;
+            } else {
+              jjtree.popNode();
+            }
+            if (jjte000 instanceof RuntimeException) {
+              throw (RuntimeException)jjte000;
+            }
+            if (jjte000 instanceof ParseException) {
+              throw (ParseException)jjte000;
+            }
+            throw (Error)jjte000;
+          } finally {
+            if (jjtc000) {
+              jjtree.closeNodeScope(jjtn000, true);
+            }
+          }
+/*@egen*/
+	}
+
+	void GetDataStatement() : {/*@bgen(jjtree) GetDataStatement */
+  ASTGetDataStatement jjtn000 = new ASTGetDataStatement(JJTGETDATASTATEMENT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+	{/*@bgen(jjtree) GetDataStatement */
+          try {
+/*@egen*/
+	  < GET_DATA >
+	  < LEFT_PAREN >
+	  MultipleParams()
+	  < RIGHT_PAREN >
+	  < SEMICOLON >/*@bgen(jjtree)*/
+          {
+            jjtree.closeNodeScope(jjtn000, true);
+            jjtc000 = false;
+          }
+/*@egen*/
+	  { System.out.println("Successfully parsed a GetData Statement!\n"); }/*@bgen(jjtree)*/
           } catch (Throwable jjte000) {
             if (jjtc000) {
               jjtree.clearNodeScope(jjtn000);

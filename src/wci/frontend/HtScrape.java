@@ -16,7 +16,7 @@ import static wci.intermediate.symtabimpl.SymTabKeyImpl.*;
 import static wci.intermediate.icodeimpl.ICodeKeyImpl.*;
 
 public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrapeConstants {/*@bgen(jjtree)*/
-  protected static JJTHtScrapeState jjtree = new JJTHtScrapeState();private static final String SOURCE_SUFFIX = ".txt";
+  protected static JJTHtScrapeState jjtree = new JJTHtScrapeState();private static final String SOURCE_SUFFIX = ".hts";
     private static final String OUTPUT_SUFFIX = ".j";
 
     private static SymTabStack symTabStack;
@@ -32,9 +32,9 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
         symTabStack = SymTabFactory.createSymTabStack();
         Predefined.initialize(symTabStack);
 
-        // Process the source file path which ends in .pcl
+// Process the source file path which ends in .hts
         // and create the output file path which ends in .j
-        String sourceFilePath = "errors.txt";
+        String sourceFilePath = args[0];
         int truncatedLength = sourceFilePath.length() - SOURCE_SUFFIX.length();
         int suffixIndex = sourceFilePath.lastIndexOf(SOURCE_SUFFIX);
         String objectFilePath = (suffixIndex == truncatedLength)
@@ -134,6 +134,7 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
           case PRINT:
           case PRINT_FULL_TABLE:
           case PRINT_DATA:
+          case GET_DATA:
           case IDENTIFIER:
             ;
             break;
@@ -162,6 +163,9 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
             break;
           case PRINT_DATA:
             PrintDataStatement();
+            break;
+          case GET_DATA:
+            GetDataStatement();
             break;
           case IF:
             IfStatement();
@@ -821,6 +825,46 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
     }
   }
 
+  static final public void GetDataStatement() throws ParseException {
+    trace_call("GetDataStatement");
+    try {
+                                   /*@bgen(jjtree) GetDataStatement */
+  ASTGetDataStatement jjtn000 = new ASTGetDataStatement(JJTGETDATASTATEMENT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+      try {
+        jj_consume_token(GET_DATA);
+        jj_consume_token(LEFT_PAREN);
+        MultipleParams();
+        jj_consume_token(RIGHT_PAREN);
+        jj_consume_token(SEMICOLON);
+            jjtree.closeNodeScope(jjtn000, true);
+            jjtc000 = false;
+            System.out.println("Successfully parsed a GetData Statement!\u005cn");
+      } catch (Throwable jjte000) {
+            if (jjtc000) {
+              jjtree.clearNodeScope(jjtn000);
+              jjtc000 = false;
+            } else {
+              jjtree.popNode();
+            }
+            if (jjte000 instanceof RuntimeException) {
+              {if (true) throw (RuntimeException)jjte000;}
+            }
+            if (jjte000 instanceof ParseException) {
+              {if (true) throw (ParseException)jjte000;}
+            }
+            {if (true) throw (Error)jjte000;}
+      } finally {
+            if (jjtc000) {
+              jjtree.closeNodeScope(jjtn000, true);
+            }
+      }
+    } finally {
+      trace_return("GetDataStatement");
+    }
+  }
+
   static final public void IfStatement() throws ParseException {
     trace_call("IfStatement");
     try {
@@ -1369,74 +1413,6 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
     finally { jj_save(1, xla); }
   }
 
-  static private boolean jj_3R_9() {
-    if (jj_3R_13()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_21() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(45)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(44)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(54)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(55)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(56)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(57)) return true;
-    }
-    }
-    }
-    }
-    }
-    return false;
-  }
-
-  static private boolean jj_3R_15() {
-    if (jj_3R_12()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_6() {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_10() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_14()) {
-    jj_scanpos = xsp;
-    if (jj_3R_15()) {
-    jj_scanpos = xsp;
-    if (jj_3R_16()) {
-    jj_scanpos = xsp;
-    if (jj_3R_17()) return true;
-    }
-    }
-    }
-    return false;
-  }
-
-  static private boolean jj_3R_14() {
-    if (jj_3R_6()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_8() {
-    if (jj_3R_12()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_2() {
-    if (jj_3R_5()) return true;
-    return false;
-  }
-
   static private boolean jj_3R_17() {
     if (jj_3R_13()) return true;
     return false;
@@ -1448,16 +1424,8 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
     return false;
   }
 
-  static private boolean jj_3R_5() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(EQUALS)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_8()) {
-    jj_scanpos = xsp;
-    if (jj_3R_9()) return true;
-    }
-    if (jj_scan_token(SEMICOLON)) return true;
+  static private boolean jj_3R_9() {
+    if (jj_3R_13()) return true;
     return false;
   }
 
@@ -1471,8 +1439,18 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
     return false;
   }
 
-  static private boolean jj_3_1() {
-    if (jj_3R_4()) return true;
+  static private boolean jj_3R_6() {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_8() {
+    if (jj_3R_12()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_2() {
+    if (jj_3R_5()) return true;
     return false;
   }
 
@@ -1484,6 +1462,19 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
 
   static private boolean jj_3R_13() {
     if (jj_scan_token(STRING_LITERAL)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_5() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(EQUALS)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_8()) {
+    jj_scanpos = xsp;
+    if (jj_3R_9()) return true;
+    }
+    if (jj_scan_token(SEMICOLON)) return true;
     return false;
   }
 
@@ -1505,6 +1496,11 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
     return false;
   }
 
+  static private boolean jj_3_1() {
+    if (jj_3R_4()) return true;
+    return false;
+  }
+
   static private boolean jj_3R_20() {
     if (jj_scan_token(NUMBER)) return true;
     return false;
@@ -1520,17 +1516,33 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
     return false;
   }
 
+  static private boolean jj_3R_23() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(40)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(41)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(42)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(43)) return true;
+    }
+    }
+    }
+    return false;
+  }
+
   static private boolean jj_3R_4() {
     if (jj_3R_6()) return true;
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(59)) {
-    jj_scanpos = xsp;
     if (jj_scan_token(60)) {
     jj_scanpos = xsp;
     if (jj_scan_token(61)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(62)) return true;
+    if (jj_scan_token(62)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(63)) return true;
     }
     }
     }
@@ -1539,19 +1551,51 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
     return false;
   }
 
-  static private boolean jj_3R_23() {
+  static private boolean jj_3R_21() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(39)) {
+    if (jj_scan_token(46)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(40)) {
+    if (jj_scan_token(45)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(41)) {
+    if (jj_scan_token(55)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(42)) return true;
+    if (jj_scan_token(56)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(57)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(58)) return true;
     }
     }
     }
+    }
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_15() {
+    if (jj_3R_12()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_10() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_14()) {
+    jj_scanpos = xsp;
+    if (jj_3R_15()) {
+    jj_scanpos = xsp;
+    if (jj_3R_16()) {
+    jj_scanpos = xsp;
+    if (jj_3R_17()) return true;
+    }
+    }
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_14() {
+    if (jj_3R_6()) return true;
     return false;
   }
 
@@ -1578,7 +1622,7 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
       jj_la1_0 = new int[] {0x80e04800,0x80e04800,0x0,0x0,0x0,0x280,0x680,0x0,0x680,0x1000,0x0,0x0,0x0,0x680,0x0,0x0,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x7,0x7,0x78000000,0x4,0x4,0x0,0x4,0x8000,0x4,0x0,0x780,0x3c03780,0x3c03780,0x4,0x3c03000,0x780,};
+      jj_la1_1 = new int[] {0xf,0xf,0xf0000000,0x8,0x8,0x0,0x8,0x10000,0x8,0x0,0xf00,0x7806f00,0x7806f00,0x8,0x7806000,0xf00,};
    }
   static final private JJCalls[] jj_2_rtns = new JJCalls[2];
   static private boolean jj_rescan = false;
@@ -1790,7 +1834,7 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[63];
+    boolean[] la1tokens = new boolean[64];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -1807,7 +1851,7 @@ public class HtScrape/*@bgen(jjtree)*/implements HtScrapeTreeConstants, HtScrape
         }
       }
     }
-    for (int i = 0; i < 63; i++) {
+    for (int i = 0; i < 64; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

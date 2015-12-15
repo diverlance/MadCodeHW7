@@ -14,6 +14,7 @@ public class CodeGeneratorVisitor
 {
 	private final String RTLPrintFullPath = "wci/backend/JSOUP/printFullTable(Ljava/lang/String;I)V";
 	private final String RTLPrintDataPath = "wci/backend/JSOUP/printData(Ljava/lang/String;III)V";
+	private final String RTLGetDataPath = "wci/backend/JSOUP/getData(Ljava/lang/String;III)Ljava/lang/String;";
 	private int label = 1;
 	
     public Object visit(ASTSimpleAssignment node, Object data)
@@ -21,7 +22,7 @@ public class CodeGeneratorVisitor
     	String programName        = (String) data;
         SimpleNode variableNode   = (SimpleNode) node.jjtGetChild(0);
         SimpleNode expressionNode = (SimpleNode) node.jjtGetChild(1);
-
+        
         // Emit code for the expression.
         expressionNode.jjtAccept(this, data);
         TypeSpec expressionType = expressionNode.getTypeSpec();
@@ -151,14 +152,7 @@ public class CodeGeneratorVisitor
 
         // Emit code for the expression.
         expressionNode.jjtAccept(this, data);
-        TypeSpec expressionType = expressionNode.getTypeSpec();
-
-        // Get the assignment target type.
-        TypeSpec targetType = node.getTypeSpec();
-
         SymTabEntry id = (SymTabEntry) variableNode.getAttribute(ID);
-        String fieldName = id.getName();
-        TypeSpec type = id.getTypeSpec();
 
         // Emit the appropriate store instruction.
         CodeGenerator.objectFile.println("    astore " + (id.getIndex()+1));
@@ -278,6 +272,34 @@ public class CodeGeneratorVisitor
         variable4Node.jjtAccept(this, data);
         
         CodeGenerator.objectFile.println("    invokestatic "+RTLPrintDataPath);
+        CodeGenerator.objectFile.flush();
+
+        return data;
+    }
+    
+    public Object visit(ASTGetDataStatement node, Object data)
+    {
+    	SimpleNode storageNode   = (SimpleNode) node.jjtGetChild(0).jjtGetChild(0);
+    	SimpleNode variable1Node   = (SimpleNode) node.jjtGetChild(0).jjtGetChild(1);
+        SimpleNode variable2Node   = (SimpleNode) node.jjtGetChild(0).jjtGetChild(2);
+        SimpleNode variable3Node   = (SimpleNode) node.jjtGetChild(0).jjtGetChild(3);
+        SimpleNode variable4Node   = (SimpleNode) node.jjtGetChild(0).jjtGetChild(4);
+        
+        variable1Node.jjtAccept(this, data);
+        variable2Node.jjtAccept(this, data);
+        variable3Node.jjtAccept(this, data);
+        variable4Node.jjtAccept(this, data);
+        
+        CodeGenerator.objectFile.println("    invokestatic "+RTLGetDataPath);
+        
+        SymTabEntry id = (SymTabEntry) storageNode.getAttribute(ID);
+        String fieldName = id.getName();
+        TypeSpec type = id.getTypeSpec();
+        if(type == Predefined.stringType)
+        {
+        	CodeGenerator.objectFile.println("    astore " + (id.getIndex()+1));
+        }
+        
         CodeGenerator.objectFile.flush();
 
         return data;

@@ -37,7 +37,7 @@ public interface HtScrapeConstants {
   /** RegularExpression Id. */
   int RETURN = 19;
   /** RegularExpression Id. */
-  int PROCEDURE = 20;
+  int FUNC = 20;
   /** RegularExpression Id. */
   int INT = 21;
   /** RegularExpression Id. */
@@ -65,63 +65,65 @@ public interface HtScrapeConstants {
   /** RegularExpression Id. */
   int PRINT_DATA = 33;
   /** RegularExpression Id. */
-  int IDENTIFIER = 34;
+  int GET_DATA = 34;
   /** RegularExpression Id. */
-  int LEFT_PAREN = 35;
+  int IDENTIFIER = 35;
   /** RegularExpression Id. */
-  int RIGHT_PAREN = 36;
+  int LEFT_PAREN = 36;
   /** RegularExpression Id. */
-  int LEFT_CURLY = 37;
+  int RIGHT_PAREN = 37;
   /** RegularExpression Id. */
-  int RIGHT_CURLY = 38;
+  int LEFT_CURLY = 38;
   /** RegularExpression Id. */
-  int PLUS = 39;
+  int RIGHT_CURLY = 39;
   /** RegularExpression Id. */
-  int MINUS = 40;
+  int PLUS = 40;
   /** RegularExpression Id. */
-  int MULTIPLY = 41;
+  int MINUS = 41;
   /** RegularExpression Id. */
-  int DIVIDE = 42;
+  int MULTIPLY = 42;
   /** RegularExpression Id. */
-  int EQUALS = 43;
+  int DIVIDE = 43;
   /** RegularExpression Id. */
-  int LESS_THAN = 44;
+  int EQUALS = 44;
   /** RegularExpression Id. */
-  int GREATER_THAN = 45;
+  int LESS_THAN = 45;
   /** RegularExpression Id. */
-  int BANG = 46;
+  int GREATER_THAN = 46;
   /** RegularExpression Id. */
-  int COMMA = 47;
+  int BANG = 47;
   /** RegularExpression Id. */
-  int PERIOD = 48;
+  int COMMA = 48;
   /** RegularExpression Id. */
-  int SEMICOLON = 49;
+  int PERIOD = 49;
   /** RegularExpression Id. */
-  int AT_SIGN = 50;
+  int SEMICOLON = 50;
   /** RegularExpression Id. */
-  int POUND_SIGN = 51;
+  int AT_SIGN = 51;
   /** RegularExpression Id. */
-  int LETTER = 52;
+  int POUND_SIGN = 52;
   /** RegularExpression Id. */
-  int DIGIT = 53;
+  int LETTER = 53;
   /** RegularExpression Id. */
-  int LESS_EQUAL = 54;
+  int DIGIT = 54;
   /** RegularExpression Id. */
-  int GREATER_EQUAL = 55;
+  int LESS_EQUAL = 55;
   /** RegularExpression Id. */
-  int DOUBLE_EQUAL = 56;
+  int GREATER_EQUAL = 56;
   /** RegularExpression Id. */
-  int NOT_EQUAL = 57;
+  int DOUBLE_EQUAL = 57;
   /** RegularExpression Id. */
-  int PLUS_PLUS = 58;
+  int NOT_EQUAL = 58;
   /** RegularExpression Id. */
-  int PLUS_EQUAL = 59;
+  int PLUS_PLUS = 59;
   /** RegularExpression Id. */
-  int MINUS_EQUAL = 60;
+  int PLUS_EQUAL = 60;
   /** RegularExpression Id. */
-  int MULTIPLY_EQUAL = 61;
+  int MINUS_EQUAL = 61;
   /** RegularExpression Id. */
-  int DIVIDE_EQUAL = 62;
+  int MULTIPLY_EQUAL = 62;
+  /** RegularExpression Id. */
+  int DIVIDE_EQUAL = 63;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -148,7 +150,7 @@ public interface HtScrapeConstants {
     "\"break\"",
     "\"void\"",
     "\"return\"",
-    "\"procedure\"",
+    "\"func\"",
     "\"int\"",
     "\"num\"",
     "\"string\"",
@@ -162,6 +164,7 @@ public interface HtScrapeConstants {
     "\"print\"",
     "\"printFullTable\"",
     "\"printData\"",
+    "\"getData\"",
     "<IDENTIFIER>",
     "\"(\"",
     "\")\"",

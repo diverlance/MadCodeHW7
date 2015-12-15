@@ -30,7 +30,7 @@ import static wci.intermediate.icodeimpl.ICodeKeyImpl.*;
 
 public class HtScrape
 {
-    private static final String SOURCE_SUFFIX = ".txt";
+    private static final String SOURCE_SUFFIX = ".hts";
     private static final String OUTPUT_SUFFIX = ".j";
 
     private static SymTabStack symTabStack;
@@ -46,9 +46,9 @@ public class HtScrape
         symTabStack = SymTabFactory.createSymTabStack();
         Predefined.initialize(symTabStack);
 
-        // Process the source file path which ends in .pcl
+// Process the source file path which ends in .hts
         // and create the output file path which ends in .j
-        String sourceFilePath = "in.txt";
+        String sourceFilePath = args[0];
         int truncatedLength = sourceFilePath.length() - SOURCE_SUFFIX.length();
         int suffixIndex = sourceFilePath.lastIndexOf(SOURCE_SUFFIX);
         String objectFilePath = (suffixIndex == truncatedLength)
@@ -152,8 +152,8 @@ TOKEN: /*HtScrape Tokens */
     < RETURN: "return" >
     { debugStream.println("RETURN token: " + matchedToken.image); }
     |
-	< PROCEDURE: "procedure" >
-	{ debugStream.println("PROCEDURE token: " + matchedToken.image); }
+	< FUNC: "func" >
+	{ debugStream.println("FUNC token: " + matchedToken.image); }
 	| 
     < INT: "int" >
     { debugStream.println("INT token: " + matchedToken.image); }
@@ -193,7 +193,10 @@ TOKEN: /*HtScrape Tokens */
 	|
  	< PRINT_DATA: "printData" >
  	{ debugStream.println("PRINT_DATA token: " + matchedToken.image); }
-	|  
+	|
+	< GET_DATA: "getData" >
+ 	{ debugStream.println("GET_DATA token: " + matchedToken.image); }
+	| 
     <IDENTIFIER: (["a"-"z", "A"-"Z"])(["a"-"z", "A"-"Z", "0"-"9","_", "-"])* >  
    	{ debugStream.println("IDENTIFIER token: " + matchedToken.image); }
     |
@@ -285,7 +288,6 @@ TOKEN: /*HtScrape Tokens */
     }
 	  	
 } 
- 
 	
 	SimpleNode Statement() : {}
 	{
@@ -296,7 +298,8 @@ TOKEN: /*HtScrape Tokens */
 	    lookahead()|
 	    PrintStatement() |
 	    PrintFullTableStatement()|
-	    PrintDataStatement()|
+	    PrintDataStatement() |
+	    GetDataStatement() |
 	    IfStatement()|
 	    WhileStatement()
 	  )*
@@ -420,7 +423,7 @@ TOKEN: /*HtScrape Tokens */
 	  }
 	  newVariable(type)
 	  < EQUALS >
-	  stringConstant()
+	  stringConstant() 
 	  < SEMICOLON >
 	  { System.out.println("Successfully parsed a String Declaration!\n"); }
 	}
@@ -466,6 +469,16 @@ TOKEN: /*HtScrape Tokens */
 	  < RIGHT_PAREN >
 	  < SEMICOLON >
 	  { System.out.println("Successfully parsed a PrintData Statement!\n"); }
+	}
+
+	void GetDataStatement() : {}
+	{
+	  < GET_DATA >
+	  < LEFT_PAREN >
+	  MultipleParams()
+	  < RIGHT_PAREN >
+	  < SEMICOLON >
+	  { System.out.println("Successfully parsed a GetData Statement!\n"); }
 	}
 
     void IfStatement() : {}

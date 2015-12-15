@@ -88,4 +88,46 @@ public class JSOUP
 			e.toString();
 		}
 	}
+	
+	public static String getData(String filename, int tableNum, int x, int y)
+	{
+		int t = 1;
+		String result = "";
+		try
+		{
+			Document html = Jsoup.connect(filename).get();
+			Elements tables = html.select("table");
+			for(Element table : tables)
+			{
+				if(t == tableNum)
+				{
+					int i = 1;
+					int j = 1;
+					Elements rows = table.select("tr");
+					for(Element row : rows)
+					{
+						if(i == x)
+						{
+							Elements columns = row.select("td");
+							for(Element column : columns)
+							{
+								if(j == y)
+									result += (column.text());
+								j++;
+							}
+							result +="";
+						}
+						i++;
+					}
+				}
+				t++;
+			}
+			
+		}
+		catch(IOException e)
+		{
+			e.toString();
+		}
+		return result;
+	}
 }

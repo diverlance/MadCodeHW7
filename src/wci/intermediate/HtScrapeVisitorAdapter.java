@@ -48,46 +48,6 @@ public class HtScrapeVisitorAdapter implements HtScrapeVisitor{
 		return node.childrenAccept(this, data);
 	}
 
-	/*@Override
-	public Object visit(ASTFileDeclaration node, Object data) {
-		return node.childrenAccept(this, data);
-	}
-
-	@Override
-	public Object visit(ASTLoadStatement node, Object data) {
-		return node.childrenAccept(this, data);
-	}
-
-	@Override
-	public Object visit(ASTTableDeclaration node, Object data) {
-		return node.childrenAccept(this, data);
-	}
-
-	@Override
-	public Object visit(ASTGetTableStatement node, Object data) {
-		return node.childrenAccept(this, data);
-	}
-
-	@Override
-	public Object visit(ASTTableDataDeclaration node, Object data) {
-		return node.childrenAccept(this, data);
-	}
-
-	@Override
-	public Object visit(ASTGetTableDataStatement node, Object data) {
-		return node.childrenAccept(this, data);
-	}
-
-	@Override
-	public Object visit(ASTColorDeclaration node, Object data) {
-		return node.childrenAccept(this, data);
-	}
-
-	@Override
-	public Object visit(ASTGetColorStatement node, Object data) {
-		return node.childrenAccept(this, data);
-	}
-*/
 	@Override
 	public Object visit(ASTMultipleParams node, Object data) {
 		return node.childrenAccept(this, data);
@@ -97,11 +57,6 @@ public class HtScrapeVisitorAdapter implements HtScrapeVisitor{
 	public Object visit(ASTPrintStatement node, Object data) {
 		return node.childrenAccept(this, data);
 	}
-
-	//@Override
-	//public Object visit(ASTCloseStatement node, Object data) {
-	//	return node.childrenAccept(this, data);
-	//}
 
 	@Override
 	public Object visit(ASTIfStatement node, Object data) {
@@ -188,7 +143,9 @@ public class HtScrapeVisitorAdapter implements HtScrapeVisitor{
 		return node.childrenAccept(this, data);
 	}
 
-	
-
+	@Override
+	public Object visit(ASTGetDataStatement node, Object data) {
+		return node.childrenAccept(this, data);
+	}
     
 }
